@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityStandardAssets.Characters.ThirdPerson;
+using System.Collections.Generic;
 
 [RequireComponent(typeof (ThirdPersonCharacter))]
 public class PlayerMovement : MonoBehaviour
@@ -10,6 +11,10 @@ public class PlayerMovement : MonoBehaviour
     ThirdPersonCharacter thirdPersonCharacter;   // A reference to the ThirdPersonCharacter on the object
     CameraRaycaster cameraRaycaster;
     Vector3 currentClickTarget;
+    public GameObject loc1;
+    public GameObject loc2;
+    Vector3 curLoc;
+    bool moving = false;
 
     bool isInDirectMode = false;
 
@@ -18,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
         cameraRaycaster = Camera.main.GetComponent<CameraRaycaster>();
         thirdPersonCharacter = GetComponent<ThirdPersonCharacter>();
         currentClickTarget = transform.position;
+        curLoc = loc1.transform.position;
     }
 
     // Fixed update is called in sync with physics
@@ -58,24 +64,36 @@ public class PlayerMovement : MonoBehaviour
             switch (cameraRaycaster.currentLayerHit)
             {
                 case Layer.Walkable:
-                    currentClickTarget = cameraRaycaster.hit.point;
+                    currentClickTarget = loc1.transform.position;                
                     break;
                 case Layer.Enemy:
                     print("Not moving to enemy");
                     break;
                 default:
                     print("Unexpected layer found");
+                    print(cameraRaycaster.currentLayerHit);
                     return;
             }
         }
 
         var playerToClickPoint = currentClickTarget - transform.position;
+        //print(playerToClickPoint);
         if (playerToClickPoint.magnitude >= walkMoveStopRadius)
-        {
+        {   
+            if(moving == false)
+            {
+                moving = true;
+            }
             thirdPersonCharacter.Move(playerToClickPoint, false, false);
         }
         else
         {
+            print("else statement");
+            if (moving == true)
+            {
+                moving = false;
+                curLoc = loc2.transform.position;
+            }
             thirdPersonCharacter.Move(Vector3.zero, false, false);
         }
     }
