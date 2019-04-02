@@ -9,70 +9,46 @@ public class PlayerMovement : MonoBehaviour
 
     ThirdPersonCharacter thirdPersonCharacter;   // A reference to the ThirdPersonCharacter on the object
     CameraRaycaster cameraRaycaster;
-    Vector3 currentClickTarget;
+    Vector3 currentTarget;
+    int currLoc;
 
-    bool isInDirectMode = false;
+    public GameObject loc1, loc2, loc3, loc4, loc5;
+
+    public GameObject[] locations;
 
     private void Start()
     {
         cameraRaycaster = Camera.main.GetComponent<CameraRaycaster>();
         thirdPersonCharacter = GetComponent<ThirdPersonCharacter>();
-        currentClickTarget = transform.position;
+        currentTarget = thirdPersonCharacter.transform.position;
+        locations = new GameObject[5] { loc1, loc2, loc3, loc4, loc5};
+        currLoc = 0;
     }
 
     // Fixed update is called in sync with physics
     private void FixedUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.G)) // G for gamepad. TODO add to menu
+        if (Input.GetKeyDown(KeyCode.Space)) // G for gamepad. TODO add to menu
         {
-            isInDirectMode = !isInDirectMode; // toggle mode
-            currentClickTarget = transform.position; // clear the click target
+            currentTarget = locations[currLoc].transform.position; // clear the click target
+            if (currLoc < locations.Length - 1) currLoc++;
         }
 
-        if (isInDirectMode)
-        {
-            ProcessDirectMovement();
-        }
-        else
-        {
-            ProcessMouseMovement();
-        }
+        ProcessDirectMovement();
     }
 
     private void ProcessDirectMovement()
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        
+
         // calculate camera relative direction to move:
         Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
-        Vector3 movement = v * cameraForward + h * Camera.main.transform.right;
+        Vector3 movement = currentTarget - thirdPersonCharacter.transform.position;
 
-        thirdPersonCharacter.Move(movement, false, false);
-    }
-
-    private void ProcessMouseMovement()
-    {
-        if (Input.GetMouseButton(0))
+        if (movement.magnitude >= walkMoveStopRadius)
         {
-            switch (cameraRaycaster.currentLayerHit)
-            {
-                case Layer.Walkable:
-                    currentClickTarget = cameraRaycaster.hit.point;
-                    break;
-                case Layer.Enemy:
-                    print("Not moving to enemy");
-                    break;
-                default:
-                    print("Unexpected layer found");
-                    return;
-            }
-        }
-
-        var playerToClickPoint = currentClickTarget - transform.position;
-        if (playerToClickPoint.magnitude >= walkMoveStopRadius)
-        {
-            thirdPersonCharacter.Move(playerToClickPoint, false, false);
+            thirdPersonCharacter.Move(movement, false, false);
         }
         else
         {
@@ -80,4 +56,3 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 }
-
