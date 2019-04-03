@@ -17,20 +17,25 @@ public class Game_Manager : MonoBehaviour
     }
     phases currentPhase;
     bool playerPhase1Done = false;
+    bool enemiesMoving = false;
 
 
     // Start is called before the first frame update
     void Start()
     {
         currentPhase = phases.Phase1;
+   
     }
 
     IEnumerator WaitForPosition()
     {
         
         print("waiting til he reaches location");
-        yield return new WaitWhile(() => goal.magnitude > 2);
+        yield return new WaitWhile(() => goal.magnitude > 0.2f);
+        player.animator.SetBool("Idling", true);
+        player.animator.SetBool("Running", false);
         playerPhase1Done = true;
+
         print("he made it");
     }
 
@@ -40,12 +45,17 @@ public class Game_Manager : MonoBehaviour
     {
         switch(currentPhase)
         {
-            case phases.Phase1:           
+            case phases.Phase1:
+                
                 HandlePlayerPhase1();
                 if (playerPhase1Done)
                 {
+                    
                     HandleEnemyPhase1();
                 }
+                break;
+            case phases.Phase2:
+                print("phase2");
                 break;
         }
         
@@ -58,18 +68,39 @@ public class Game_Manager : MonoBehaviour
     {
         
         if (Input.GetKeyDown("1"))
-        {       
-            StartCoroutine(WaitForPosition());
+        {
+            player.animator.SetBool("Idling", false);
+            player.animator.SetBool("Running", true);
+            StartCoroutine(WaitForPosition());           
             player.playerMoveLoc1();
         }
+        
         goal = player.transform.position - player.loc1.transform.position;
+        
+
+
+
     }
 
     void HandleEnemyPhase1()
     {
-        Enemies[0].enemyMoveLoc();
-        Enemies[1].enemyMoveLoc();
-        Enemies[2].enemyMoveLoc();
+        
+        enemyMove E1 = Enemies[0];
+        enemyMove E2 = Enemies[1];
+        enemyMove E3 = Enemies[2];
+        if(!enemiesMoving)
+        {
+            E1.enemyMoveLoc();
+            E2.enemyMoveLoc();
+            E3.enemyMoveLoc();
+            enemiesMoving = true;
+        }
+        
+
+        if (E1.isMoveFinished() && E2.isMoveFinished() && E3.isMoveFinished())
+        {
+            currentPhase = phases.Phase2;
+        }
     }
     
 
