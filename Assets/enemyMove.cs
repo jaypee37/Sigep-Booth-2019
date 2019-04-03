@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class playerMove : MonoBehaviour
+public class enemyMove : MonoBehaviour
 {
     NavMeshAgent agent;
-    public Transform loc1;
+    public Transform loc;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,8 +20,8 @@ public class playerMove : MonoBehaviour
         ;
     }
 
-    public void playerMoveLoc1()
+    public void enemyMoveLoc()
     {
-        agent.destination = loc1.position;
+        agent.destination = loc.position;
     }
 }
