@@ -9,15 +9,19 @@ public class enemyMove : MonoBehaviour
     public Transform loc;
     private bool moveFinished = false;
     Vector3 goal;
+    Vector3 turnV;
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        agent.updateRotation = true;
+
     }
     IEnumerator WaitForPosition()
     {
         print("enemy is moving");
         yield return new WaitWhile(() => goal.magnitude > 2);
+        agent.destination = turnV;
         moveFinished = true;
         print("enemy made it");
     }
@@ -26,6 +30,7 @@ public class enemyMove : MonoBehaviour
     void Update()
     {
         goal = transform.position - loc.position;
+
     }
 
     public void enemyMoveLoc()
@@ -37,5 +42,15 @@ public class enemyMove : MonoBehaviour
     public bool isMoveFinished()
     {
         return moveFinished;
+    }
+
+    public void Die()
+    {
+        Destroy(this.gameObject);
+    }
+
+    public void SetTurnVector(Vector3 turn)
+    {
+        turnV = turn;
     }
 }
