@@ -10,11 +10,15 @@ public class enemyMove : MonoBehaviour
     private bool moveFinished = false;
     Vector3 goal;
     Vector3 turnV;
+    ParticleSystem pSystem;
+    public bool LockedOn;
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = true;
+        pSystem = transform.GetComponentInChildren<ParticleSystem>();
+        LockedOn = false;
 
     }
     IEnumerator WaitForPosition()
@@ -53,4 +57,13 @@ public class enemyMove : MonoBehaviour
     {
         turnV = turn;
     }
-}
+    public void LockOn()
+    {
+        pSystem.Play();
+        LockedOn = true;
+    }
+    public bool isLockedOn()
+    {
+        return LockedOn;
+    }
+}   
