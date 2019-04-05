@@ -9,6 +9,9 @@ public class Game_Manager : MonoBehaviour
     public bool enemiesMoving = false;
     public int playerLocIndex = 0;
     public GameObject enemySet;
+    public int curEnemySetSize = 0;
+    public int curEnemySetDeadCount = 0;
+    bool playerLockingOn = false;
 
     enum phases
     {
@@ -40,7 +43,7 @@ public class Game_Manager : MonoBehaviour
         switch(currentPhase)
         {
             case phases.Phase1:
-                
+                curEnemySetSize = 3;
                 HandlePlayerPhase();
                 if (playerPhaseDone = player.isMoveFinished())
                 {
@@ -52,6 +55,7 @@ public class Game_Manager : MonoBehaviour
                 }
                 break;
             case phases.Phase2:
+                curEnemySetSize = 3;
                 HandlePlayerPhase();
                 if (playerPhaseDone = player.isMoveFinished())
                 {
@@ -63,6 +67,7 @@ public class Game_Manager : MonoBehaviour
                 }
                 break;
             case phases.Phase3:
+                curEnemySetSize = 3;
                 HandlePlayerPhase();
                 if (playerPhaseDone = player.isMoveFinished())
                 {
@@ -75,6 +80,7 @@ public class Game_Manager : MonoBehaviour
                 }
                 break;
             case phases.Phase4:
+                curEnemySetSize = 4;
                 HandlePlayerPhase();
                 if (playerPhaseDone = player.isMoveFinished())
                 {
@@ -188,18 +194,41 @@ public class Game_Manager : MonoBehaviour
 
         if (Input.GetKeyDown("2"))
         {
-            foreach (enemyMove E in curEnemySet)
+            for (int i = 0; i < curEnemySetSize; i++)
             {
-                if (E != null)
+                if (curEnemySet[i] != null && curEnemySet[i].isLockedOn())
                 {
-                    E.Die();
+                    curEnemySet[i].Die();
+                    curEnemySet[i] = null;
+
+                    curEnemySetDeadCount++;
+                    playerLockingOn = false;
                 }
-
-
             }
-            resetForNextPhase();
 
+            if(curEnemySetDeadCount == curEnemySetSize)
+            {
+                print("reseting for next phase");
+                resetForNextPhase();
+            }
+            
+        }
 
+        if (Input.GetKeyDown("space"))
+        {
+            if(!playerLockingOn)
+            {
+                int i = (int)(Random.Range(0, curEnemySetSize));
+                print(i);
+                while (curEnemySet[i] == null || curEnemySet[i].isLockedOn())
+                {
+                    i = (int)(Random.Range(0, curEnemySetSize));
+                }
+                print(i);
+                curEnemySet[i].LockOn();
+                playerLockingOn = true;
+            }
+            
         }
     }
 
@@ -212,6 +241,7 @@ public class Game_Manager : MonoBehaviour
         player.setMoveFinished(false);
         playerLocIndex += 1;
         currentPhase += 1;
+        curEnemySetDeadCount = 0;
 
     }
 
