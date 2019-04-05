@@ -825,7 +825,7 @@ ModelImporter:
       name: attack
       takeName: Take 001
       firstFrame: 120
-      lastFrame: 170
+      lastFrame: 270
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
