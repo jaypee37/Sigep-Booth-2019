@@ -5,8 +5,10 @@ using UnityEngine;
 public class Game_Manager : MonoBehaviour
 {
     public playerMove player;
-    public enemyMove[] Enemies = new enemyMove[3];
-    public Vector3 goal;
+    public enemyMove[] curEnemySet;
+    public bool enemiesMoving = false;
+    public int playerLocIndex = 0;
+    public GameObject enemySet;
 
     enum phases
     {
@@ -16,28 +18,20 @@ public class Game_Manager : MonoBehaviour
         Phase4
     }
     phases currentPhase;
-    bool playerPhase1Done = false;
-    bool enemiesMoving = false;
+    bool playerPhaseDone = false;
+    bool enemyMovingPhase = false;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
         currentPhase = phases.Phase1;
+        curEnemySet = new enemyMove[4];
    
     }
 
-    IEnumerator WaitForPosition()
-    {
-        
-        print("waiting til he reaches location");
-        yield return new WaitWhile(() => goal.magnitude > 0.2f);
-        player.animator.SetBool("Idling", true);
-        player.animator.SetBool("Running", false);
-        playerPhase1Done = true;
-
-        print("he made it");
-    }
+    
 
 
     // Update is called once per frame
@@ -47,15 +41,49 @@ public class Game_Manager : MonoBehaviour
         {
             case phases.Phase1:
                 
-                HandlePlayerPhase1();
-                if (playerPhase1Done)
+                HandlePlayerPhase();
+                if (playerPhaseDone = player.isMoveFinished())
                 {
-                    
-                    HandleEnemyPhase1();
+                    HandleEnemyPhase(currentPhase);
+                }
+                if (enemyMovingPhase)
+                {
+                    HandleAttackMode();
                 }
                 break;
             case phases.Phase2:
-                print("phase2");
+                HandlePlayerPhase();
+                if (playerPhaseDone = player.isMoveFinished())
+                {
+                    HandleEnemyPhase(currentPhase);
+                }
+                if (enemyMovingPhase)
+                {
+                    HandleAttackMode();
+                }
+                break;
+            case phases.Phase3:
+                HandlePlayerPhase();
+                if (playerPhaseDone = player.isMoveFinished())
+                {
+                    player.transform.Rotate(Vector3.right * Time.deltaTime);
+                    HandleEnemyPhase(currentPhase);
+                }
+                if (enemyMovingPhase)
+                {
+                    HandleAttackMode();
+                }
+                break;
+            case phases.Phase4:
+                HandlePlayerPhase();
+                if (playerPhaseDone = player.isMoveFinished())
+                {
+                    HandleEnemyPhase(currentPhase);
+                }
+                if (enemyMovingPhase)
+                {
+                    HandleAttackMode();
+                }
                 break;
         }
         
@@ -64,46 +92,128 @@ public class Game_Manager : MonoBehaviour
 
     }
 
-    void HandlePlayerPhase1()
+    void HandlePlayerPhase()
     {
         
         if (Input.GetKeyDown("1"))
-        {
-            player.animator.SetBool("Idling", false);
-            player.animator.SetBool("Running", true);
-            StartCoroutine(WaitForPosition());           
-            player.playerMoveLoc1();
+        {         
+            player.playerMoveLoc(playerLocIndex);
         }
-        
-        goal = player.transform.position - player.loc1.transform.position;
-        
-
-
 
     }
 
-    void HandleEnemyPhase1()
+    void HandleEnemyPhase(phases phase)
     {
-        
-        enemyMove E1 = Enemies[0];
-        enemyMove E2 = Enemies[1];
-        enemyMove E3 = Enemies[2];
+   
         if(!enemiesMoving)
         {
-            E1.enemyMoveLoc();
-            E2.enemyMoveLoc();
-            E3.enemyMoveLoc();
+            switch (phase)
+            {
+                case phases.Phase1:
+                    enemySet = GameObject.FindGameObjectWithTag("EnemySet1");
+                    for (int i = 0; i < 3; i++)
+                    {
+                        curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
+                        Vector3 turn = new Vector3();
+                        turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z - 2);
+
+                        curEnemySet[i].SetTurnVector(turn);
+                    }
+                    break;
+                case phases.Phase2:
+                    enemySet = GameObject.FindGameObjectWithTag("EnemySet2");
+                    for (int i = 0; i < 3; i++)
+                    {
+                        curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
+                        Vector3 turn = new Vector3();
+                        turn.Set(curEnemySet[i].loc.position.x - 2, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
+
+                        curEnemySet[i].SetTurnVector(turn);
+                    }
+                    break;
+                case phases.Phase3:
+                    enemySet = GameObject.FindGameObjectWithTag("EnemySet3");
+                    for (int i = 0; i < 3; i++)
+                    {
+                        curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
+                        Vector3 turn = new Vector3();
+                        turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
+
+                        curEnemySet[i].SetTurnVector(turn);
+                    }
+                    break;
+                case phases.Phase4:
+                    enemySet = GameObject.FindGameObjectWithTag("EnemySet4");
+                    for (int i = 0; i < 4; i++)
+                    {
+                        curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
+                        Vector3 turn = new Vector3();
+                        turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
+
+                        curEnemySet[i].SetTurnVector(turn);
+                    }
+                    break;
+
+            }
+
+            foreach (enemyMove e in curEnemySet)
+            {
+                if(e != null)
+                {
+                    e.enemyMoveLoc();
+                }
+                
+            }
             enemiesMoving = true;
         }
-        
 
-        if (E1.isMoveFinished() && E2.isMoveFinished() && E3.isMoveFinished())
+        bool flag = true;
+        foreach (enemyMove e in curEnemySet)
         {
-            currentPhase = phases.Phase2;
+            if(e != null)
+            {
+                flag = flag && e.isMoveFinished();
+            }
+            
+        }
+        if (flag == true)
+        {
+            enemyMovingPhase = true;
+        }
+        
+    }
+
+    public void HandleAttackMode()
+    {
+
+        if (Input.GetKeyDown("2"))
+        {
+            foreach (enemyMove E in curEnemySet)
+            {
+                if (E != null)
+                {
+                    E.Die();
+                }
+
+
+            }
+            resetForNextPhase();
+
+
         }
     }
-    
 
+
+    public void resetForNextPhase()
+    {
+        enemiesMoving = false;
+        playerPhaseDone = false;
+        enemyMovingPhase = false;
+        player.setMoveFinished(false);
+        playerLocIndex += 1;
+        currentPhase += 1;
+
+    }
 
 
 }
