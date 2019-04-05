@@ -12,6 +12,14 @@ public class Game_Manager : MonoBehaviour
     public int curEnemySetSize = 0;
     public int curEnemySetDeadCount = 0;
     bool playerLockingOn = false;
+    public float attackRate = 1F;
+    public float timestamp = 0F;
+    enemyMove curEnemy;
+    Quaternion curPlayerRotation = Quaternion.Euler(0, 0, 0);
+    bool dontTurnCamera;
+    Vector3 curCamPos;
+    public CameraFollow cam;
+    public bool attacking;
 
     enum phases
     {
@@ -31,6 +39,9 @@ public class Game_Manager : MonoBehaviour
     {
         currentPhase = phases.Phase1;
         curEnemySet = new enemyMove[4];
+        dontTurnCamera = false;
+        attacking = false;
+        
    
     }
 
@@ -40,7 +51,8 @@ public class Game_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        switch(currentPhase)
+        cam.UpdateCam(dontTurnCamera);
+        switch (currentPhase)
         {
             case phases.Phase1:
                 curEnemySetSize = 3;
@@ -92,7 +104,7 @@ public class Game_Manager : MonoBehaviour
                 }
                 break;
         }
-        
+
         
        
 
@@ -100,11 +112,15 @@ public class Game_Manager : MonoBehaviour
 
     void HandlePlayerPhase()
     {
-        
-        if (Input.GetKeyDown("1"))
-        {         
-            player.playerMoveLoc(playerLocIndex);
+        if(!player.isMoveFinished())
+        {
+            if (Input.GetKeyDown("1"))
+            {
+                player.playerMoveLoc(playerLocIndex);
+            }
         }
+        
+        
 
     }
 
@@ -210,6 +226,7 @@ public class Game_Manager : MonoBehaviour
             {
                 print("reseting for next phase");
                 resetForNextPhase();
+
             }
             
         }
@@ -225,11 +242,39 @@ public class Game_Manager : MonoBehaviour
                     i = (int)(Random.Range(0, curEnemySetSize));
                 }
                 print(i);
+                curEnemy = curEnemySet[i];
                 curEnemySet[i].LockOn();
                 playerLockingOn = true;
             }
+            else
+            {
+                if (Time.time > timestamp)
+                {
+                    player.Attack(curEnemy);
+                    timestamp = Time.time + (3.1F * attackRate);
+                    dontTurnCamera = true;
+                    
+                }
+                
+            }
             
         }
+        if (player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack")) 
+        {
+            attacking = true;
+        }
+        
+        if(attacking && !player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
+        {
+            attacking = false;
+            player.resetRotation();
+        }
+        
+
+        
+
+
+
     }
 
 
@@ -242,6 +287,7 @@ public class Game_Manager : MonoBehaviour
         playerLocIndex += 1;
         currentPhase += 1;
         curEnemySetDeadCount = 0;
+        dontTurnCamera = false;
 
     }
 

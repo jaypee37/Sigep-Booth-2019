@@ -20,7 +20,12 @@ public class playerMove : MonoBehaviour
     private bool moving = false;
     private bool turning = false;
     private Vector3 turnR;
-    
+    NavMeshAgent armAgent;
+    public Transform armLoc;
+    public bool attacking = false;
+    Quaternion playerRot;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,8 +39,12 @@ public class playerMove : MonoBehaviour
         goal2 = transform.position - locations[1].position;
         goal3 = transform.position - locations[2].position;
         goal4 = transform.position - locations[3].position;
+        armAgent = GameObject.FindGameObjectWithTag("throw arm").GetComponent<NavMeshAgent>();
+        attacking = false;
 
     }
+
+    
     IEnumerator WaitForPosition(int i)
     {
 
@@ -74,6 +83,7 @@ public class playerMove : MonoBehaviour
 
         animator.SetBool("Idling", true);
         animator.SetBool("Running", false);
+        animator.SetBool("Attacking", false);
         playerMoveFinished = true;
         moving = false;      
 
@@ -89,6 +99,8 @@ public class playerMove : MonoBehaviour
         goal3 = transform.position - locations[2].position;
         goal4 = transform.position - locations[3].position;
         
+        
+        
 
     }
 
@@ -97,6 +109,7 @@ public class playerMove : MonoBehaviour
         
         animator.SetBool("Idling", false);
         animator.SetBool("Running", true);
+        animator.SetBool("Attacking", false);
         StartCoroutine(WaitForPosition(index));
         curLoc = locations[index];
         agent.destination = curLoc.position;
@@ -115,10 +128,23 @@ public class playerMove : MonoBehaviour
         playerMoveFinished = flag;
        
     }
-
-    public void shoot()
+    bool animatorIsAttacking()
     {
-        GameObject bullet = Instantiate(projectile, transform.position, Quaternion.identity) as GameObject;
-        bullet.GetComponent<Rigidbody>().AddForce(transform.forward * 10);
+        return animator.GetCurrentAnimatorStateInfo(0).length >
+                animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
     }
+
+    public void Attack(enemyMove enemy)
+    {
+
+        animator.SetTrigger("Attack");
+        playerRot = transform.rotation;
+        transform.LookAt(enemy.transform);
+
+    }
+    public void resetRotation()
+    {
+        transform.rotation = playerRot;
+    }
+
 }
