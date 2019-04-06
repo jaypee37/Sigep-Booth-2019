@@ -111,8 +111,8 @@ public class playerMove : MonoBehaviour
                 
                 takeDamage();
                 tookDamage = true;
-                print("damage taken");
-                print(health);
+                //print("damage taken");
+                //print(health);
             }
         }
         
@@ -175,7 +175,7 @@ public class playerMove : MonoBehaviour
     }
     public void DoneGettingAttacked()
     {
-        print("player recieved done attacking");
+       // print("player recieved done attacking");
         gettingAttacked = false;
         tookDamage = false;
     }
