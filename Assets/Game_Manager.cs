@@ -21,6 +21,7 @@ public class Game_Manager : MonoBehaviour
     public CameraFollow cam;
     public bool attacking;
     public armMove AttackAnimBehavior;
+    public EnemyAttackManager enemyManager;
 
     enum phases
     {
@@ -60,24 +61,32 @@ public class Game_Manager : MonoBehaviour
         {
             case phases.Phase1:
                 curEnemySetSize = 3;
-                HandlePlayerPhase();
-                if (playerPhaseDone = player.isMoveFinished())
+                if(!playerPhaseDone && !enemyMovingPhase)
+                {
+                    HandlePlayerPhase();
+                }
+                
+                if (playerPhaseDone && !enemyMovingPhase)
                 {
                     HandleEnemyPhase(currentPhase);
                     player.playerRot = player.transform.rotation;
                 }
-                if (enemyMovingPhase)
+                if (enemyMovingPhase )
                 {
                     HandleAttackMode();
                 }
                 break;
             case phases.Phase2:
                 curEnemySetSize = 3;
-                HandlePlayerPhase();
-                if (playerPhaseDone = player.isMoveFinished())
+                if (!playerPhaseDone && !enemyMovingPhase)
                 {
-                    player.playerRot = player.transform.rotation;
+                    HandlePlayerPhase();
+                }
+
+                if (playerPhaseDone && !enemyMovingPhase)
+                {
                     HandleEnemyPhase(currentPhase);
+                    player.playerRot = player.transform.rotation;
                 }
                 if (enemyMovingPhase)
                 {
@@ -86,11 +95,15 @@ public class Game_Manager : MonoBehaviour
                 break;
             case phases.Phase3:
                 curEnemySetSize = 3;
-                HandlePlayerPhase();
-                if (playerPhaseDone = player.isMoveFinished())
+                if (!playerPhaseDone && !enemyMovingPhase)
                 {
-                    player.playerRot = player.transform.rotation;
+                    HandlePlayerPhase();
+                }
+
+                if (playerPhaseDone && !enemyMovingPhase)
+                {
                     HandleEnemyPhase(currentPhase);
+                    player.playerRot = player.transform.rotation;
                 }
                 if (enemyMovingPhase)
                 {
@@ -99,11 +112,15 @@ public class Game_Manager : MonoBehaviour
                 break;
             case phases.Phase4:
                 curEnemySetSize = 4;
-                HandlePlayerPhase();
-                if (playerPhaseDone = player.isMoveFinished())
+                if (!playerPhaseDone && !enemyMovingPhase)
                 {
-                    player.playerRot = player.transform.rotation;
+                    HandlePlayerPhase();
+                }
+
+                if (playerPhaseDone && !enemyMovingPhase)
+                {
                     HandleEnemyPhase(currentPhase);
+                    player.playerRot = player.transform.rotation;
                 }
                 if (enemyMovingPhase)
                 {
@@ -129,6 +146,10 @@ public class Game_Manager : MonoBehaviour
                 player.playerMoveLoc(playerLocIndex);
             }
         }
+        else
+        {
+            playerPhaseDone = true;
+        }
         
         
 
@@ -147,10 +168,14 @@ public class Game_Manager : MonoBehaviour
                     for (int i = 0; i < 3; i++)
                     {
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
+                        
+                      
                         Vector3 turn = new Vector3();
                         turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z - 2);
+                        GameObject t = new GameObject();
+                        t.transform.position = turn;
 
-                        curEnemySet[i].SetTurnVector(turn);
+                        curEnemySet[i].SetTurnVector(turn,t);
                     }
                     break;
                 case phases.Phase2:
@@ -161,8 +186,9 @@ public class Game_Manager : MonoBehaviour
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
                         Vector3 turn = new Vector3();
                         turn.Set(curEnemySet[i].loc.position.x - 2, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
-
-                        curEnemySet[i].SetTurnVector(turn);
+                        GameObject t = new GameObject();
+                        t.transform.position = turn;
+                        curEnemySet[i].SetTurnVector(turn,t);
                     }
                     break;
                 case phases.Phase3:
@@ -173,8 +199,9 @@ public class Game_Manager : MonoBehaviour
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
                         Vector3 turn = new Vector3();
                         turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
-
-                        curEnemySet[i].SetTurnVector(turn);
+                        GameObject t = new GameObject();
+                        t.transform.position = turn;
+                        curEnemySet[i].SetTurnVector(turn,t);
                     }
                     break;
                 case phases.Phase4:
@@ -185,8 +212,9 @@ public class Game_Manager : MonoBehaviour
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
                         Vector3 turn = new Vector3();
                         turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
-
-                        curEnemySet[i].SetTurnVector(turn);
+                        GameObject t = new GameObject();
+                        t.transform.position = turn;
+                        curEnemySet[i].SetTurnVector(turn,t);
                     }
                     break;
 
@@ -212,7 +240,11 @@ public class Game_Manager : MonoBehaviour
 
         if (flag == true)
         {
+            print("call init");
             enemyMovingPhase = true;
+            playerPhaseDone = false;
+            enemyManager.InitCurrentEnemySet(curEnemySet,curEnemySetSize);
+
         }
         
     }
@@ -243,7 +275,7 @@ public class Game_Manager : MonoBehaviour
             if (Time.time > timestamp)
                 {
                     player.Attack(curEnemy);
-                    timestamp = Time.time + (3.1F * attackRate);
+                    timestamp = Time.time + (2.1F * attackRate);
                     dontTurnCamera = true;                 
                 }   
             
