@@ -74,7 +74,7 @@ public class enemyMove : MonoBehaviour
         animator.SetBool("Attack", false);
         finishedAttacking = true;
         FinishedAttack();
-        print("i finished attacking");
+       // print("i finished attacking");
        
         StopCoroutine(WaitForAttack(time));
      
@@ -157,7 +157,7 @@ public class enemyMove : MonoBehaviour
 
     public void takeDamage()
     {
-        health -= 50;
+        health -= 100;
     }
 
     public void Attack()
