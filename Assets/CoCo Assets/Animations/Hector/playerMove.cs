@@ -23,7 +23,7 @@ public class playerMove : MonoBehaviour
     NavMeshAgent armAgent;
     public Transform armLoc;
     public bool attacking = false;
-    Quaternion playerRot;
+    public Quaternion playerRot;
 
 
     // Start is called before the first frame update
@@ -138,13 +138,16 @@ public class playerMove : MonoBehaviour
     {
 
         animator.SetTrigger("Attack");
-        playerRot = transform.rotation;
         transform.LookAt(enemy.transform);
 
     }
-    public void resetRotation()
+    public void resetRotation(int i)
     {
-        transform.rotation = playerRot;
+        if(i < 3)
+        {
+            transform.LookAt(locations[i+1]);
+        }
+        
     }
 
 }
