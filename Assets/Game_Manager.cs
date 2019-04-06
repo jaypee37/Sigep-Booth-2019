@@ -22,6 +22,9 @@ public class Game_Manager : MonoBehaviour
     public bool attacking;
     public armMove AttackAnimBehavior;
     public EnemyAttackManager enemyManager;
+    bool changeOfDirection = false;
+    int currentEnemyIndex;
+    
 
     enum phases
     {
@@ -136,6 +139,16 @@ public class Game_Manager : MonoBehaviour
        
 
     }
+    void HandleDeLaCruzPhase()
+    {
+        
+        
+
+
+    }
+
+
+
 
     void HandlePlayerPhase()
     {
@@ -248,26 +261,74 @@ public class Game_Manager : MonoBehaviour
         }
         
     }
+    public void HandleLockOn()
+    {
+        float direction = Input.GetAxis("Horizontal");
+        if(direction != 0 && playerLockingOn && !changeOfDirection)
+        {
+            changeOfDirection = true;
+            if(direction < 0)
+            {
+                print("move left");
+                if(currentEnemyIndex - 1 >= 0 && !curEnemySet[currentEnemyIndex-1].dead  )
+                {
+                    curEnemySet[currentEnemyIndex].LockOn(false);
+                    currentEnemyIndex -= 1;
+                    curEnemy = curEnemySet[currentEnemyIndex];
+                    curEnemySet[currentEnemyIndex].LockOn(true);
+                }
+
+            }
+            else
+            {
+                print("move right");
+                if (currentEnemyIndex + 1 >= 0 && !curEnemySet[currentEnemyIndex + 1].dead)
+                {
+                    curEnemySet[currentEnemyIndex].LockOn(false);
+                    currentEnemyIndex += 1;
+                    curEnemy = curEnemySet[currentEnemyIndex];
+                    curEnemySet[currentEnemyIndex].LockOn(true);
+                }
+            }
+            
+        }
+        else if(direction == 0 && changeOfDirection)
+        {
+            changeOfDirection = false;
+        }
+        else
+        {
+            if (!playerLockingOn)
+            {
+                currentEnemyIndex = (int)(Random.Range(0, curEnemySetSize));
+
+                while (curEnemySet[currentEnemyIndex].isLockedOn() || curEnemySet[currentEnemyIndex].dead)
+                {
+                    currentEnemyIndex = (int)(Random.Range(0, curEnemySetSize));
+                }
+
+                curEnemy = curEnemySet[currentEnemyIndex];
+                curEnemySet[currentEnemyIndex].LockOn(true);
+                playerLockingOn = true;
+            }
+        }
+        
+
+
+
+    }
+
+    public void CreateButtonSequence()
+    {
+        string[] buttons = { "Square", "X", "Circle", "Triangle" };
+
+    }
+
 
     public void HandleAttackMode()
     {
-
+        HandleLockOn();
         
-
-        
-        if(!playerLockingOn)
-        {
-            int i = (int)(Random.Range(0, curEnemySetSize));
-
-            while (curEnemySet[i].isLockedOn())
-            {
-                i = (int)(Random.Range(0, curEnemySetSize));
-            }
-
-            curEnemy = curEnemySet[i];
-            curEnemySet[i].LockOn();
-            playerLockingOn = true;
-        }
 
         if (Input.GetButtonDown("HectorAttack"))
         {
@@ -281,18 +342,14 @@ public class Game_Manager : MonoBehaviour
             
         }
 
-
-        for (int i = 0; i < curEnemySetSize; i++)
+        if(curEnemy.dead)
         {
-
-            if(curEnemySet[i].dead == true && !curEnemySet[i].sentDeadReciept)
-            {
-                curEnemySetDeadCount++;
-                curEnemySet[i].setRecieptSent(true);
-                playerLockingOn = false;
-            }           
-
+            curEnemySetDeadCount++;           
+            playerLockingOn = false;
         }
+
+
+        
 
         if (curEnemySetDeadCount == curEnemySetSize)
         {
@@ -316,11 +373,9 @@ public class Game_Manager : MonoBehaviour
 
     public void enemyHit()
     {
-
         print("sent enemy hit");
         curEnemy.takeDamage();
-        print("finish sent enemy hit");
-        
+        print("finish sent enemy hit");       
     }
     public void resetForNextPhase()
     {

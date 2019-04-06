@@ -24,6 +24,7 @@ public class enemyMove : MonoBehaviour
     public EnemyAttackManager attackManager;
     bool finishedAttacking = false;
     public playerMove player;
+    public GameObject grunt;
    
     // Start is called before the first frame update
     void Start()
@@ -39,22 +40,23 @@ public class enemyMove : MonoBehaviour
         sentDeadReciept = false;
         animator = GetComponent<Animator>();
         enemyAttacking = false;
+        
        
     }
     IEnumerator WaitForPosition()
     {
         print("enemy is moving");
-        yield return new WaitWhile(() => goal.magnitude > 2);       
+        yield return new WaitWhile(() => goal.magnitude > 2);
         agent.destination = loc2.position;
         yield return new WaitWhile(() => goal2.magnitude > 0.2f);
         animator.SetBool("Run", false);
         agent.updatePosition = false;
-        agent.updateRotation = false;
-        
+        agent.updateRotation = false;        
         print("enemy made it");
-        yield return new WaitForSeconds(3);
+        //yield return new WaitForSeconds(1);
         enemyAttacking = true;
         moveFinished = true;
+        
 
     }
     IEnumerator WaitForDeath()
@@ -66,11 +68,14 @@ public class enemyMove : MonoBehaviour
     }
     IEnumerator WaitForAttack(int time)
     {
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(5.4f);
+        player.DoneGettingAttacked();
+        yield return new WaitForSeconds(time - 5.4f);
         animator.SetBool("Attack", false);
         finishedAttacking = true;
         FinishedAttack();
         print("i finished attacking");
+       
         StopCoroutine(WaitForAttack(time));
      
 
@@ -87,7 +92,7 @@ public class enemyMove : MonoBehaviour
 
         if (health == 0 && !dead)
         {
-            //transform.localScale = Vector3.zero;
+           
             animator.SetBool("Attack", false);
             animator.SetBool("Run", false);
             attackManager.enemyFinishedAttacking();
@@ -99,7 +104,7 @@ public class enemyMove : MonoBehaviour
         }
         if (moveFinished)
         {
-            transform.position = loc2.position;
+            //transform.position = loc2.position;
         }
 
     }
@@ -131,10 +136,19 @@ public class enemyMove : MonoBehaviour
         turnV = turn;
         tnew = t.transform;
     }
-    public void LockOn()
+    public void LockOn(bool flag)
     {
-        pSystem.Play();
-        LockedOn = true;
+        if(flag)
+        {
+            pSystem.Play();
+        }
+        else
+        {
+            pSystem.Stop();
+        }
+        
+        
+        LockedOn = flag;
     }
     public bool isLockedOn()
     {
@@ -148,11 +162,18 @@ public class enemyMove : MonoBehaviour
 
     public void Attack()
     {
-        transform.LookAt(player.transform);
+        
+
+        GameObject g = new GameObject();
+        Vector3 v = new Vector3(player.transform.position.x, 0, player.transform.position.z);
+        g.transform.position = v;
+        grunt.transform.LookAt(g.transform);
         animator.SetBool("Run", false);
         animator.SetBool("Attack",true);
         int time = Random.Range(6, 9);
         StartCoroutine(WaitForAttack(time));
+        player.GettingAttacked(this);
+
     }
 
     public void FinishedAttack()
