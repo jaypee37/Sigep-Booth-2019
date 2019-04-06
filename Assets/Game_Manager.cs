@@ -20,6 +20,7 @@ public class Game_Manager : MonoBehaviour
     Vector3 curCamPos;
     public CameraFollow cam;
     public bool attacking;
+    public armMove AttackAnimBehavior;
 
     enum phases
     {
@@ -45,13 +46,16 @@ public class Game_Manager : MonoBehaviour
    
     }
 
-    
 
+    private void LateUpdate()
+    {
+        cam.UpdateCam(dontTurnCamera);
+    }
 
     // Update is called once per frame
     void Update()
     {
-        cam.UpdateCam(dontTurnCamera);
+        
         switch (currentPhase)
         {
             case phases.Phase1:
@@ -60,6 +64,7 @@ public class Game_Manager : MonoBehaviour
                 if (playerPhaseDone = player.isMoveFinished())
                 {
                     HandleEnemyPhase(currentPhase);
+                    player.playerRot = player.transform.rotation;
                 }
                 if (enemyMovingPhase)
                 {
@@ -71,6 +76,7 @@ public class Game_Manager : MonoBehaviour
                 HandlePlayerPhase();
                 if (playerPhaseDone = player.isMoveFinished())
                 {
+                    player.playerRot = player.transform.rotation;
                     HandleEnemyPhase(currentPhase);
                 }
                 if (enemyMovingPhase)
@@ -83,7 +89,7 @@ public class Game_Manager : MonoBehaviour
                 HandlePlayerPhase();
                 if (playerPhaseDone = player.isMoveFinished())
                 {
-                    player.transform.Rotate(Vector3.right * Time.deltaTime);
+                    player.playerRot = player.transform.rotation;
                     HandleEnemyPhase(currentPhase);
                 }
                 if (enemyMovingPhase)
@@ -96,12 +102,16 @@ public class Game_Manager : MonoBehaviour
                 HandlePlayerPhase();
                 if (playerPhaseDone = player.isMoveFinished())
                 {
+                    player.playerRot = player.transform.rotation;
                     HandleEnemyPhase(currentPhase);
                 }
                 if (enemyMovingPhase)
                 {
                     HandleAttackMode();
                 }
+                break;
+            default:
+                print("end of game");
                 break;
         }
 
@@ -133,6 +143,7 @@ public class Game_Manager : MonoBehaviour
             {
                 case phases.Phase1:
                     enemySet = GameObject.FindGameObjectWithTag("EnemySet1");
+                    curEnemySet = new enemyMove[3];
                     for (int i = 0; i < 3; i++)
                     {
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
@@ -144,6 +155,7 @@ public class Game_Manager : MonoBehaviour
                     break;
                 case phases.Phase2:
                     enemySet = GameObject.FindGameObjectWithTag("EnemySet2");
+                    curEnemySet = new enemyMove[3];
                     for (int i = 0; i < 3; i++)
                     {
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
@@ -155,6 +167,7 @@ public class Game_Manager : MonoBehaviour
                     break;
                 case phases.Phase3:
                     enemySet = GameObject.FindGameObjectWithTag("EnemySet3");
+                    curEnemySet = new enemyMove[3];
                     for (int i = 0; i < 3; i++)
                     {
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
@@ -166,6 +179,7 @@ public class Game_Manager : MonoBehaviour
                     break;
                 case phases.Phase4:
                     enemySet = GameObject.FindGameObjectWithTag("EnemySet4");
+                    curEnemySet = new enemyMove[4];
                     for (int i = 0; i < 4; i++)
                     {
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
@@ -180,7 +194,7 @@ public class Game_Manager : MonoBehaviour
 
             foreach (enemyMove e in curEnemySet)
             {
-                if(e != null)
+                if(e.moving == false)
                 {
                     e.enemyMoveLoc();
                 }
@@ -190,14 +204,12 @@ public class Game_Manager : MonoBehaviour
         }
 
         bool flag = true;
+
         foreach (enemyMove e in curEnemySet)
         {
-            if(e != null)
-            {
-                flag = flag && e.isMoveFinished();
-            }
-            
+            flag = flag && e.isMoveFinished();                      
         }
+
         if (flag == true)
         {
             enemyMovingPhase = true;
@@ -208,57 +220,56 @@ public class Game_Manager : MonoBehaviour
     public void HandleAttackMode()
     {
 
-        if (Input.GetKeyDown("2"))
+        
+
+        
+        if(!playerLockingOn)
         {
-            for (int i = 0; i < curEnemySetSize; i++)
-            {
-                if (curEnemySet[i] != null && curEnemySet[i].isLockedOn())
-                {
-                    curEnemySet[i].Die();
-                    curEnemySet[i] = null;
+            int i = (int)(Random.Range(0, curEnemySetSize));
 
-                    curEnemySetDeadCount++;
-                    playerLockingOn = false;
-                }
+            while (curEnemySet[i].isLockedOn())
+            {
+                i = (int)(Random.Range(0, curEnemySetSize));
             }
 
-            if(curEnemySetDeadCount == curEnemySetSize)
-            {
-                print("reseting for next phase");
-                resetForNextPhase();
-
-            }
-            
+            curEnemy = curEnemySet[i];
+            curEnemySet[i].LockOn();
+            playerLockingOn = true;
         }
 
-        if (Input.GetKeyDown("space"))
+        if (Input.GetButtonDown("HectorAttack"))
         {
-            if(!playerLockingOn)
-            {
-                int i = (int)(Random.Range(0, curEnemySetSize));
-                print(i);
-                while (curEnemySet[i] == null || curEnemySet[i].isLockedOn())
-                {
-                    i = (int)(Random.Range(0, curEnemySetSize));
-                }
-                print(i);
-                curEnemy = curEnemySet[i];
-                curEnemySet[i].LockOn();
-                playerLockingOn = true;
-            }
-            else
-            {
-                if (Time.time > timestamp)
+            
+            if (Time.time > timestamp)
                 {
                     player.Attack(curEnemy);
                     timestamp = Time.time + (3.1F * attackRate);
-                    dontTurnCamera = true;
-                    
-                }
-                
-            }
+                    dontTurnCamera = true;                 
+                }   
             
         }
+
+
+        for (int i = 0; i < curEnemySetSize; i++)
+        {
+
+            if(curEnemySet[i].dead == true && !curEnemySet[i].sentDeadReciept)
+            {
+                curEnemySetDeadCount++;
+                curEnemySet[i].setRecieptSent(true);
+                playerLockingOn = false;
+            }           
+
+        }
+
+        if (curEnemySetDeadCount == curEnemySetSize)
+        {
+            print("reseting for next phase");
+            player.resetRotation((int)currentPhase);
+            resetForNextPhase();
+
+        }
+
         if (player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack")) 
         {
             attacking = true;
@@ -267,17 +278,18 @@ public class Game_Manager : MonoBehaviour
         if(attacking && !player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
         {
             attacking = false;
-            player.resetRotation();
         }
-        
-
-        
-
-
 
     }
 
+    public void enemyHit()
+    {
 
+        print("sent enemy hit");
+        curEnemy.takeDamage();
+        print("finish sent enemy hit");
+        
+    }
     public void resetForNextPhase()
     {
         enemiesMoving = false;
@@ -285,7 +297,11 @@ public class Game_Manager : MonoBehaviour
         enemyMovingPhase = false;
         player.setMoveFinished(false);
         playerLocIndex += 1;
-        currentPhase += 1;
+        if((int)currentPhase < 4)
+        {
+            currentPhase += 1;
+        }
+        
         curEnemySetDeadCount = 0;
         dontTurnCamera = false;
 

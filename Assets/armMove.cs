@@ -4,20 +4,30 @@ using UnityEngine;
 
 public class armMove : StateMachineBehaviour 
 {
+
+    float startTime;
+    Game_Manager gm;
+    bool sentHit;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Debug.Log("called attack"); 
+        gm = animator.gameObject.GetComponent<GameManagerLinker>().gm;
+        startTime = Time.time;
+        sentHit = false;
+        
 
-            
+
     }
 
      //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-      //  Debug.Log(Time.time);   
-    //}
-
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        if (!sentHit && (Time.time - startTime > 2.20f) )
+        {
+            gm.enemyHit();
+            sentHit = true;
+        }
+    }
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
