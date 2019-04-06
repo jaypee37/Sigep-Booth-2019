@@ -1,0 +1,316 @@
+fileFormatVersion: 2
+guid: 8f54edfaa8c50d440b5e3d25f0c20f8b
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: arm_1.L
+    100002: arm_1.R
+    100004: arm_2.L
+    100006: arm_2.R
+    100008: Armature
+    100010: back
+    100012: Bone.003
+    100014: butt
+    100016: clavical.L
+    100018: clavical.R
+    100020: de la model
+    100022: //RootNode
+    100024: finger_1.L
+    100026: finger_1.R
+    100028: finger_2.L
+    100030: finger_2.R
+    100032: finger_3.L
+    100034: finger_3.L_end
+    100036: finger_3.R
+    100038: finger_3.R_end
+    100040: foot_1.L
+    100042: foot_1.R
+    100044: foot_2.L
+    100046: foot_2.R
+    100048: hand.L
+    100050: hand.R
+    100052: hat
+    100054: hat_end
+    100056: head
+    100058: head_end
+    100060: jaw
+    100062: jaw_end
+    100064: leg_1.L
+    100066: leg_1.R
+    100068: leg_2.L
+    100070: leg_2.R
+    100072: neck
+    100074: root
+    100076: thumb_1.L
+    100078: thumb_1.R
+    100080: thumb_2.L
+    100082: thumb_2.R
+    100084: thumb_3.L
+    100086: thumb_3.L_end
+    100088: thumb_R
+    100090: thumb_R_end
+    100092: toe.L
+    100094: toe.L_end
+    100096: toe.R
+    100098: toe.R_end
+    400000: arm_1.L
+    400002: arm_1.R
+    400004: arm_2.L
+    400006: arm_2.R
+    400008: Armature
+    400010: back
+    400012: Bone.003
+    400014: butt
+    400016: clavical.L
+    400018: clavical.R
+    400020: de la model
+    400022: //RootNode
+    400024: finger_1.L
+    400026: finger_1.R
+    400028: finger_2.L
+    400030: finger_2.R
+    400032: finger_3.L
+    400034: finger_3.L_end
+    400036: finger_3.R
+    400038: finger_3.R_end
+    400040: foot_1.L
+    400042: foot_1.R
+    400044: foot_2.L
+    400046: foot_2.R
+    400048: hand.L
+    400050: hand.R
+    400052: hat
+    400054: hat_end
+    400056: head
+    400058: head_end
+    400060: jaw
+    400062: jaw_end
+    400064: leg_1.L
+    400066: leg_1.R
+    400068: leg_2.L
+    400070: leg_2.R
+    400072: neck
+    400074: root
+    400076: thumb_1.L
+    400078: thumb_1.R
+    400080: thumb_2.L
+    400082: thumb_2.R
+    400084: thumb_3.L
+    400086: thumb_3.L_end
+    400088: thumb_R
+    400090: thumb_R_end
+    400092: toe.L
+    400094: toe.L_end
+    400096: toe.R
+    400098: toe.R_end
+    2100000: No Name
+    4300000: de la model
+    7400000: Grunt Run
+    7400002: Grunt Idle
+    7400004: Grunt Death
+    7400006: Head Throw Attack
+    9500000: //RootNode
+    13700000: de la model
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: a0cfb84cde8f26443b3cc0819e6e7099, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Grunt Run
+      takeName: Armature|ArmatureAction
+      firstFrame: 10
+      lastFrame: 40
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Grunt Idle
+      takeName: Armature|ArmatureAction
+      firstFrame: 50
+      lastFrame: 60
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Grunt Death
+      takeName: Armature|ArmatureAction
+      firstFrame: 60
+      lastFrame: 120
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Head Throw Attack
+      takeName: Armature|ArmatureAction
+      firstFrame: 140
+      lastFrame: 268
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
