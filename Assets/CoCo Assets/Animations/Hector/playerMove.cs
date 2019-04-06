@@ -24,6 +24,11 @@ public class playerMove : MonoBehaviour
     public Transform armLoc;
     public bool attacking = false;
     public Quaternion playerRot;
+    enemyMove enemyAttackingMe;
+    bool gettingAttacked;
+    int health = 100;
+    float startAttackTime;
+    bool tookDamage = false;
 
 
     // Start is called before the first frame update
@@ -98,6 +103,18 @@ public class playerMove : MonoBehaviour
         goal2 = transform.position - locations[1].position;
         goal3 = transform.position - locations[2].position;
         goal4 = transform.position - locations[3].position;
+
+        if(gettingAttacked)
+        {
+            if(enemyAttackingMe.dead == false && Time.time - startAttackTime > 3.11 && !tookDamage)
+            {
+                
+                takeDamage();
+                tookDamage = true;
+                print("damage taken");
+                print(health);
+            }
+        }
         
         
         
@@ -148,6 +165,23 @@ public class playerMove : MonoBehaviour
             transform.LookAt(locations[i+1]);
         }
         
+    }
+
+    public void GettingAttacked(enemyMove enemyAttackingMe)
+    {
+        startAttackTime = Time.time;
+        this.enemyAttackingMe = enemyAttackingMe;
+        gettingAttacked = true;
+    }
+    public void DoneGettingAttacked()
+    {
+        print("player recieved done attacking");
+        gettingAttacked = false;
+        tookDamage = false;
+    }
+    public void takeDamage()
+    {
+        health -= 10;
     }
 
 }
