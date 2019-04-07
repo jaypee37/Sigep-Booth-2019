@@ -30,6 +30,8 @@ public class Game_Manager : MonoBehaviour
     bool sequenceFinished = false;
     bool timeRanOut = false;
     bool waitingForSequence = false;
+    bool DeLaCruzMoved = false;
+    public DeLaCruzMvt DeLaCruz;
 
 
     enum phases
@@ -57,9 +59,10 @@ public class Game_Manager : MonoBehaviour
     }
     IEnumerator WaitForSequence()
     {
-        yield return new WaitForSeconds(20);
+        yield return new WaitForSeconds(15);
         timeRanOut = true;
         waitingForSequence = false;
+        StopAllCoroutines();
 
     }
 
@@ -72,21 +75,22 @@ public class Game_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.anyKey)
-        {
-            print("who");
-        }
-        
+     
         switch (currentPhase)
         {
             case phases.Phase1:
-                curEnemySetSize = 3;
+                curEnemySetSize = 3;                
+                
                 if(!playerPhaseDone && !enemyMovingPhase)
                 {
                     HandlePlayerPhase();
                 }
-                
-                if (playerPhaseDone && !enemyMovingPhase)
+                if (!DeLaCruzMoved && playerPhaseDone)
+                {
+                    HandleDeLaCruzPhase();
+                }
+
+                if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
                 {
                     HandleEnemyPhase(currentPhase);
                     player.playerRot = player.transform.rotation;
@@ -98,12 +102,17 @@ public class Game_Manager : MonoBehaviour
                 break;
             case phases.Phase2:
                 curEnemySetSize = 3;
+
                 if (!playerPhaseDone && !enemyMovingPhase)
                 {
                     HandlePlayerPhase();
                 }
+                if (!DeLaCruzMoved && playerPhaseDone)
+                {
+                    HandleDeLaCruzPhase();
+                }
 
-                if (playerPhaseDone && !enemyMovingPhase)
+                if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
                 {
                     HandleEnemyPhase(currentPhase);
                     player.playerRot = player.transform.rotation;
@@ -119,8 +128,12 @@ public class Game_Manager : MonoBehaviour
                 {
                     HandlePlayerPhase();
                 }
+                if (!DeLaCruzMoved && playerPhaseDone)
+                {
+                    HandleDeLaCruzPhase();
+                }
 
-                if (playerPhaseDone && !enemyMovingPhase)
+                if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
                 {
                     HandleEnemyPhase(currentPhase);
                     player.playerRot = player.transform.rotation;
@@ -131,13 +144,16 @@ public class Game_Manager : MonoBehaviour
                 }
                 break;
             case phases.Phase4:
-                curEnemySetSize = 4;
                 if (!playerPhaseDone && !enemyMovingPhase)
                 {
                     HandlePlayerPhase();
                 }
+                if (!DeLaCruzMoved && playerPhaseDone)
+                {
+                    HandleDeLaCruzPhase();
+                }
 
-                if (playerPhaseDone && !enemyMovingPhase)
+                if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
                 {
                     HandleEnemyPhase(currentPhase);
                     player.playerRot = player.transform.rotation;
@@ -156,11 +172,12 @@ public class Game_Manager : MonoBehaviour
        
 
     }
+
+  
     void HandleDeLaCruzPhase()
     {
-        
-        
 
+        DeLaCruzMoved = DeLaCruz.Move();
 
     }
 
@@ -172,12 +189,11 @@ public class Game_Manager : MonoBehaviour
 
         if(!player.isMoveFinished())
         {
-            if (Input.GetKeyDown("1"))
-            {
-                player.playerMoveLoc(playerLocIndex);
-            }
+           
+            player.playerMoveLoc(playerLocIndex);
+            
         }
-        else
+        if(player.isMoveFinished() && player.turnFinished)
         {
             playerPhaseDone = true;
         }
@@ -283,7 +299,7 @@ public class Game_Manager : MonoBehaviour
     }
     public void HandleLockOn()
     {
-        float direction = Input.GetAxis("Horizontal");
+        /*float direction = Input.GetAxis("Horizontal");
         if(direction != 0 && playerLockingOn && !changeOfDirection)
         {
             changeOfDirection = true;
@@ -315,9 +331,9 @@ public class Game_Manager : MonoBehaviour
         else if(direction == 0 && changeOfDirection)
         {
             changeOfDirection = false;
-        }
-        else
-        {
+        }*/
+        
+        
             if (!playerLockingOn)
             {
                 currentEnemyIndex = (int)(Random.Range(0, curEnemySetSize));
@@ -331,7 +347,7 @@ public class Game_Manager : MonoBehaviour
                 curEnemySet[currentEnemyIndex].LockOn(true);
                 playerLockingOn = true;
             }
-        }
+        
         
 
 
@@ -341,12 +357,12 @@ public class Game_Manager : MonoBehaviour
     public void CreateButtonSequence()
     {
         
-        sequence = new string[6];
-        for (int i = 0; i < 6; i++)
+        sequence = new string[3];
+        for (int i = 0; i < 3; i++)
         {
             sequence[i] = buttons[(int)Random.Range(0, 4)];
         }
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 3; i++)
         {
             print(sequence[i]);
         }
@@ -361,20 +377,44 @@ public class Game_Manager : MonoBehaviour
         {
             if (!sequenceFinished)
             {
-                for (int i = 0; i < 4; i++)
-                {
+                string curColor;
 
-                    if (Input.GetButton(buttons[i]) )
-                    {
-                        print("pressed");
-                        sequenceIndex++;
-                        if (sequenceIndex == 6)
-                        {
-                            sequenceFinished = true;
-                        }
-                        return;
-                    }
+                if (Input.GetButtonDown("Green"))
+                {
+                    print("green");
+                    curColor = "Green";
                 }
+                else if (Input.GetButtonDown("Red"))
+                {
+                    print("red");
+                    curColor = "Red";
+                }
+                else if (Input.GetButtonDown("Yellow"))
+                {
+                    print("yellow");
+                    curColor = "Yellow";
+                }
+                else if (Input.GetButtonDown("Blue"))
+                {
+                    print("blue");
+                    curColor = "Blue";
+                }
+                else
+                {
+                    curColor = "none";
+                }
+                
+
+                if (curColor == sequence[sequenceIndex])
+                { 
+                    sequenceIndex++;
+                    if (sequenceIndex == 3)
+                    {
+                        sequenceFinished = true;
+                    }
+                    return;
+                }
+                
             }
 
             if (sequenceFinished)
@@ -385,6 +425,7 @@ public class Game_Manager : MonoBehaviour
                 sequenceFinished = false;
                 sequenceIndex = 0;
                 curEnemy.takeDamage();
+                StopAllCoroutines();
             }
         }
         else
@@ -403,6 +444,8 @@ public class Game_Manager : MonoBehaviour
 
     public void HandleAttackMode()
     {
+        //dontTurnCamera = true;
+        //cam.lerp();
         HandleLockOn();
         HandleSequencePhase();
         
@@ -469,6 +512,7 @@ public class Game_Manager : MonoBehaviour
         
         curEnemySetDeadCount = 0;
         dontTurnCamera = false;
+        DeLaCruzMoved = false;
 
     }
 

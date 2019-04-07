@@ -29,6 +29,8 @@ public class playerMove : MonoBehaviour
     int health = 100;
     float startAttackTime;
     bool tookDamage = false;
+    int locIndex = 0;
+    public bool turnFinished = false;
 
 
     // Start is called before the first frame update
@@ -49,18 +51,26 @@ public class playerMove : MonoBehaviour
 
     }
 
-    
-    IEnumerator WaitForPosition(int i)
+    IEnumerator WaitForTurn(float i)
+    {
+        yield return new WaitForSeconds(i);
+        turnFinished = true;
+    }
+
+
+        IEnumerator WaitForPosition(int i)
     {
 
         Vector3 turn = new Vector3();
 
-        print("waiting til he reaches location");
+       // print("waiting til he reaches location");
         if (i == 0)
         {
             turn = locations[0].position;
             yield return new WaitWhile(() => goal1.magnitude > 0.2f);
             agent.destination = turn;
+            StartCoroutine(WaitForTurn(0));
+            
         }
 
         else if (i == 1)
@@ -68,12 +78,14 @@ public class playerMove : MonoBehaviour
             turn.Set(locations[1].position.x + 2.5f, locations[1].position.y, locations[1].position.z);
             yield return new WaitWhile(() => goal2.magnitude > 0.2f);
             agent.destination = turn;
+            StartCoroutine(WaitForTurn(1));
         }
         else if (i == 2)
         {
             turn.Set(locations[2].position.x, locations[2].position.y, locations[2].position.z + 2.5f);
             yield return new WaitWhile(() => goal3.magnitude > 0.2f);
             agent.destination = turn;
+            StartCoroutine(WaitForTurn(2));
         }
 
         else if (i == 3)
@@ -81,15 +93,15 @@ public class playerMove : MonoBehaviour
             turn.Set(locations[3].position.x - 2.5f, locations[3].position.y, locations[3].position.z);
             yield return new WaitWhile(() => goal4.magnitude > 0.2f);
             agent.destination = turn;
+            StartCoroutine(WaitForTurn(2));
         }
-
-        
-        
 
         animator.SetBool("Idling", true);
         animator.SetBool("Running", false);
         playerMoveFinished = true;
-        moving = false;      
+        locIndex++;
+        moving = false;
+
 
     }
 
@@ -122,7 +134,7 @@ public class playerMove : MonoBehaviour
 
     public void playerMoveLoc(int index)
     {
-        
+        turnFinished = false;
         animator.SetBool("Idling", false);
         animator.SetBool("Running", true);
         StartCoroutine(WaitForPosition(index));

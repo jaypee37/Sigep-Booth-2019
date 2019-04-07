@@ -45,18 +45,21 @@ public class enemyMove : MonoBehaviour
     }
     IEnumerator WaitForPosition()
     {
-        print("enemy is moving");
+        //print("enemy is moving");
         yield return new WaitWhile(() => goal.magnitude > 2);
         agent.destination = loc2.position;
         yield return new WaitWhile(() => goal2.magnitude > 0.2f);
         animator.SetBool("Run", false);
         agent.updatePosition = false;
         agent.updateRotation = false;        
-        print("enemy made it");
+        //print("enemy made it");
         //yield return new WaitForSeconds(1);
         enemyAttacking = true;
         moveFinished = true;
-        
+        GameObject g = new GameObject();
+        Vector3 v = new Vector3(player.transform.position.x, 0, player.transform.position.z);
+        g.transform.position = v;
+        grunt.transform.LookAt(g.transform);
 
     }
     IEnumerator WaitForDeath()
@@ -99,6 +102,7 @@ public class enemyMove : MonoBehaviour
             animator.SetTrigger("Death");
             dead = true;
             Destroy(pSystem);
+            Destroy(GetComponent<Rigidbody>());
             StartCoroutine(WaitForDeath());
 
         }
@@ -164,10 +168,7 @@ public class enemyMove : MonoBehaviour
     {
         
 
-        GameObject g = new GameObject();
-        Vector3 v = new Vector3(player.transform.position.x, 0, player.transform.position.z);
-        g.transform.position = v;
-        grunt.transform.LookAt(g.transform);
+        
         animator.SetBool("Run", false);
         animator.SetBool("Attack",true);
         int time = Random.Range(6, 9);
