@@ -88,7 +88,6 @@ public class playerMove : MonoBehaviour
 
         animator.SetBool("Idling", true);
         animator.SetBool("Running", false);
-        animator.SetBool("Attacking", false);
         playerMoveFinished = true;
         moving = false;      
 
@@ -126,7 +125,6 @@ public class playerMove : MonoBehaviour
         
         animator.SetBool("Idling", false);
         animator.SetBool("Running", true);
-        animator.SetBool("Attacking", false);
         StartCoroutine(WaitForPosition(index));
         curLoc = locations[index];
         agent.destination = curLoc.position;
