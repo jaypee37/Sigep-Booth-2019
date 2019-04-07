@@ -56,9 +56,9 @@ public class EnemyAttackManager : MonoBehaviour
 
     public enemyMove ChooseAttackingEnemy()
     {
-        print("choosingcharacter");
+        //print("choosingcharacter");
         int i = Random.Range(0, setSize);
-        print(i);
+        //print(i);
         while (curEnemySet[i].dead)
         {
             i = (int)(Random.Range(0, setSize));

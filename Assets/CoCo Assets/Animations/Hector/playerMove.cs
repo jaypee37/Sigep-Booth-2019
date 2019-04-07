@@ -88,7 +88,6 @@ public class playerMove : MonoBehaviour
 
         animator.SetBool("Idling", true);
         animator.SetBool("Running", false);
-        animator.SetBool("Attacking", false);
         playerMoveFinished = true;
         moving = false;      
 
@@ -111,8 +110,8 @@ public class playerMove : MonoBehaviour
                 
                 takeDamage();
                 tookDamage = true;
-                print("damage taken");
-                print(health);
+                //print("damage taken");
+                //print(health);
             }
         }
         
@@ -126,7 +125,6 @@ public class playerMove : MonoBehaviour
         
         animator.SetBool("Idling", false);
         animator.SetBool("Running", true);
-        animator.SetBool("Attacking", false);
         StartCoroutine(WaitForPosition(index));
         curLoc = locations[index];
         agent.destination = curLoc.position;
@@ -175,7 +173,7 @@ public class playerMove : MonoBehaviour
     }
     public void DoneGettingAttacked()
     {
-        print("player recieved done attacking");
+       // print("player recieved done attacking");
         gettingAttacked = false;
         tookDamage = false;
     }

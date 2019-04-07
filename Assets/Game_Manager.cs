@@ -24,7 +24,13 @@ public class Game_Manager : MonoBehaviour
     public EnemyAttackManager enemyManager;
     bool changeOfDirection = false;
     int currentEnemyIndex;
-    
+    int sequenceIndex = 0;
+    string[] buttons = { "Green", "Red", "Yellow", "Blue" };
+    string[] sequence;
+    bool sequenceFinished = false;
+    bool timeRanOut = false;
+    bool waitingForSequence = false;
+
 
     enum phases
     {
@@ -49,6 +55,13 @@ public class Game_Manager : MonoBehaviour
         
    
     }
+    IEnumerator WaitForSequence()
+    {
+        yield return new WaitForSeconds(20);
+        timeRanOut = true;
+        waitingForSequence = false;
+
+    }
 
 
     private void LateUpdate()
@@ -59,6 +72,10 @@ public class Game_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.anyKey)
+        {
+            print("who");
+        }
         
         switch (currentPhase)
         {
@@ -152,6 +169,7 @@ public class Game_Manager : MonoBehaviour
 
     void HandlePlayerPhase()
     {
+
         if(!player.isMoveFinished())
         {
             if (Input.GetKeyDown("1"))
@@ -257,6 +275,8 @@ public class Game_Manager : MonoBehaviour
             enemyMovingPhase = true;
             playerPhaseDone = false;
             enemyManager.InitCurrentEnemySet(curEnemySet,curEnemySetSize);
+            CreateButtonSequence();
+            
 
         }
         
@@ -269,7 +289,7 @@ public class Game_Manager : MonoBehaviour
             changeOfDirection = true;
             if(direction < 0)
             {
-                print("move left");
+                //print("move left");
                 if(currentEnemyIndex - 1 >= 0 && !curEnemySet[currentEnemyIndex-1].dead  )
                 {
                     curEnemySet[currentEnemyIndex].LockOn(false);
@@ -281,7 +301,7 @@ public class Game_Manager : MonoBehaviour
             }
             else
             {
-                print("move right");
+               // print("move right");
                 if (currentEnemyIndex + 1 >= 0 && !curEnemySet[currentEnemyIndex + 1].dead)
                 {
                     curEnemySet[currentEnemyIndex].LockOn(false);
@@ -320,17 +340,75 @@ public class Game_Manager : MonoBehaviour
 
     public void CreateButtonSequence()
     {
-        string[] buttons = { "Square", "X", "Circle", "Triangle" };
+        
+        sequence = new string[6];
+        for (int i = 0; i < 6; i++)
+        {
+            sequence[i] = buttons[(int)Random.Range(0, 4)];
+        }
+        for (int i = 0; i < 6; i++)
+        {
+            print(sequence[i]);
+        }
 
+        StartCoroutine(WaitForSequence());
     }
 
+    public void HandleSequencePhase()
+    {
+        
+        if(!timeRanOut)
+        {
+            if (!sequenceFinished)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+
+                    if (Input.GetButton(buttons[i]) )
+                    {
+                        print("pressed");
+                        sequenceIndex++;
+                        if (sequenceIndex == 6)
+                        {
+                            sequenceFinished = true;
+                        }
+                        return;
+                    }
+                }
+            }
+
+            if (sequenceFinished)
+            {
+                StopAllCoroutines();
+                print("completed Sequence");
+                CreateButtonSequence();
+                sequenceFinished = false;
+                sequenceIndex = 0;
+                curEnemy.takeDamage();
+            }
+        }
+        else
+
+        {
+            sequenceFinished = false;
+            sequenceIndex = 0;
+            print("you lost bitch");
+            timeRanOut = false;
+            CreateButtonSequence();
+            
+        }
+        
+
+    }
 
     public void HandleAttackMode()
     {
         HandleLockOn();
+        HandleSequencePhase();
+        
         
 
-        if (Input.GetButtonDown("HectorAttack"))
+       /* if (Input.GetButtonDown("HectorAttack"))
         {
             
             if (Time.time > timestamp)
@@ -340,7 +418,7 @@ public class Game_Manager : MonoBehaviour
                     dontTurnCamera = true;                 
                 }   
             
-        }
+        }*/
 
         if(curEnemy.dead)
         {
@@ -353,7 +431,7 @@ public class Game_Manager : MonoBehaviour
 
         if (curEnemySetDeadCount == curEnemySetSize)
         {
-            print("reseting for next phase");
+           // print("reseting for next phase");
             player.resetRotation((int)currentPhase);
             resetForNextPhase();
 
@@ -373,9 +451,9 @@ public class Game_Manager : MonoBehaviour
 
     public void enemyHit()
     {
-        print("sent enemy hit");
+        //print("sent enemy hit");
         curEnemy.takeDamage();
-        print("finish sent enemy hit");       
+        //print("finish sent enemy hit");       
     }
     public void resetForNextPhase()
     {
