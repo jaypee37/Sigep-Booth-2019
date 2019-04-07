@@ -25,7 +25,7 @@ public class Game_Manager : MonoBehaviour
     bool changeOfDirection = false;
     int currentEnemyIndex;
     int sequenceIndex = 0;
-    string[] buttons = { "Square", "X", "Circle", "Triangle" };
+    string[] buttons = { "Green", "Red", "Yellow", "Blue" };
     string[] sequence;
     bool sequenceFinished = false;
     bool timeRanOut = false;
@@ -57,7 +57,7 @@ public class Game_Manager : MonoBehaviour
     }
     IEnumerator WaitForSequence()
     {
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(20);
         timeRanOut = true;
         waitingForSequence = false;
 
@@ -72,6 +72,10 @@ public class Game_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.anyKey)
+        {
+            print("who");
+        }
         
         switch (currentPhase)
         {
@@ -165,6 +169,7 @@ public class Game_Manager : MonoBehaviour
 
     void HandlePlayerPhase()
     {
+
         if(!player.isMoveFinished())
         {
             if (Input.GetKeyDown("1"))
@@ -359,9 +364,9 @@ public class Game_Manager : MonoBehaviour
                 for (int i = 0; i < 4; i++)
                 {
 
-                    if (buttons[i] == sequence[sequenceIndex] && Input.GetButton(buttons[i]) )
+                    if (Input.GetButton(buttons[i]) )
                     {
-
+                        print("pressed");
                         sequenceIndex++;
                         if (sequenceIndex == 6)
                         {
