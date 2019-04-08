@@ -21,6 +21,7 @@ public class MainMenuController : MonoBehaviour
     bool _fadingIn;
     float _textVisibility;
     float _timeElapsed;
+    bool _playButton;
 
     AudioSource _audioSource;
 
@@ -32,6 +33,7 @@ public class MainMenuController : MonoBehaviour
         _fadingIn = false;
         _gameStarted = false;
         _textVisibility = 1.0f;
+        _playButton = false;
 
         _audioSource = GetComponent<AudioSource>();
 
@@ -39,7 +41,9 @@ public class MainMenuController : MonoBehaviour
     }
 
     private void Update() {
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        if (Input.GetAxis("Strum Down") != -1 && !_playButton)
+        {
+            _playButton = true;
             StartCoroutine("StartGame");
         }
     }
