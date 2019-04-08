@@ -56,19 +56,17 @@ public class EnemyAttackManager : MonoBehaviour
 
     public enemyMove ChooseAttackingEnemy()
     {
-        //print("choosingcharacter");
         int i = Random.Range(0, setSize);
-        //print(i);
         while (curEnemySet[i].dead)
         {
             i = (int)(Random.Range(0, setSize));
         }
         curAttackingEnemy = curEnemySet[i];
-        curEnemySet[i].Attack();
+        //curEnemySet[i].Attack();
         sentAttackRequest = true;
         enemyFinished = false;
         waitingForAttack = true;
-        return null;
+        return curAttackingEnemy;
     }
 
     public int CountDead()

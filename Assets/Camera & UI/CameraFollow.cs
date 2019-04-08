@@ -18,6 +18,8 @@ public class CameraFollow : MonoBehaviour
     GameObject prevLoc;
     public Transform[] locations;
     int locIndex = 0;
+    public NoteStaff n;
+    bool lerpingBitttch = false;
 
     // Use this for initialization
     void Start()
@@ -33,10 +35,18 @@ public class CameraFollow : MonoBehaviour
     {
 
     }
+    IEnumerator WaitForFade()
+
+    {
+        yield return new WaitWhile(() => goal.magnitude > 0.2f);
+        print("done lerping");
+        n.Fade(1);
+    }
+
     IEnumerator WaitForLerp()
 
     {
-
+        n.Fade(2);
         lerpBackward = true;
         yield return new WaitForSeconds(3);
         doneLerping = true;
@@ -45,14 +55,12 @@ public class CameraFollow : MonoBehaviour
         lerpLoc = locations[locIndex];
         lerpBackward = false;
         lerpForward = false;
-
-
-
     }
 
 
     public void UpdateCam(bool flag)
     {
+        goal = transform.position - lerpLoc.position;
         if (!flag)
         {
 
@@ -69,7 +77,7 @@ public class CameraFollow : MonoBehaviour
         {
             if (!lerpForward)
             {
-                print("lerp caslled");
+                StartCoroutine(WaitForFade());
                 prevLoc.transform.position = transform.position;
                 prevLoc.transform.rotation = transform.rotation;
                 lerpForward = true;
@@ -77,6 +85,7 @@ public class CameraFollow : MonoBehaviour
 
             transform.position = Vector3.Lerp(transform.position, lerpLoc.position, 0.05f);
             transform.rotation = Quaternion.Lerp(transform.rotation, lerpLoc.rotation, 0.05f);
+            //print((transform.position - lerpLoc.position).magnitude < 0.2f);
 
         }
 

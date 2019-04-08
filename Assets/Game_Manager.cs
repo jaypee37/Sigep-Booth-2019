@@ -312,54 +312,21 @@ public class Game_Manager : MonoBehaviour
     }
     public void HandleLockOn()
     {
-        /*float direction = Input.GetAxis("Horizontal");
-        if(direction != 0 && playerLockingOn && !changeOfDirection)
+      
+        
+        if (!playerLockingOn)
         {
-            changeOfDirection = true;
-            if(direction < 0)
-            {
-                //print("move left");
-                if(currentEnemyIndex - 1 >= 0 && !curEnemySet[currentEnemyIndex-1].dead  )
-                {
-                    curEnemySet[currentEnemyIndex].LockOn(false);
-                    currentEnemyIndex -= 1;
-                    curEnemy = curEnemySet[currentEnemyIndex];
-                    curEnemySet[currentEnemyIndex].LockOn(true);
-                }
+            currentEnemyIndex = (int)(Random.Range(0, curEnemySetSize));
 
-            }
-            else
-            {
-               // print("move right");
-                if (currentEnemyIndex + 1 >= 0 && !curEnemySet[currentEnemyIndex + 1].dead)
-                {
-                    curEnemySet[currentEnemyIndex].LockOn(false);
-                    currentEnemyIndex += 1;
-                    curEnemy = curEnemySet[currentEnemyIndex];
-                    curEnemySet[currentEnemyIndex].LockOn(true);
-                }
-            }
-            
-        }
-        else if(direction == 0 && changeOfDirection)
-        {
-            changeOfDirection = false;
-        }*/
-        
-        
-            if (!playerLockingOn)
+            while (curEnemySet[currentEnemyIndex].isLockedOn() || curEnemySet[currentEnemyIndex].dead)
             {
                 currentEnemyIndex = (int)(Random.Range(0, curEnemySetSize));
-
-                while (curEnemySet[currentEnemyIndex].isLockedOn() || curEnemySet[currentEnemyIndex].dead)
-                {
-                    currentEnemyIndex = (int)(Random.Range(0, curEnemySetSize));
-                }
-
-                curEnemy = curEnemySet[currentEnemyIndex];
-                curEnemySet[currentEnemyIndex].LockOn(true);
-                playerLockingOn = true;
             }
+
+            curEnemy = curEnemySet[currentEnemyIndex];
+            curEnemySet[currentEnemyIndex].LockOn(true);
+            playerLockingOn = true;
+        }
         
         
 
