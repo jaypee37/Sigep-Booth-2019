@@ -36,6 +36,7 @@ public class Game_Manager : MonoBehaviour
     bool cameraSetForNextPhase = false;
     bool enemiesDead = false;
     public NoteStaff staff;
+    bool sequenceReady = false;
 
 
     enum phases
@@ -63,7 +64,7 @@ public class Game_Manager : MonoBehaviour
     }
     IEnumerator WaitForSequence()
     {
-        yield return new WaitForSeconds(15);
+        yield return new WaitForSeconds(12);
         timeRanOut = true;
         waitingForSequence = false;
         StopAllCoroutines();
@@ -154,6 +155,7 @@ public class Game_Manager : MonoBehaviour
                 }
                 break;
             case phases.Phase4:
+                curEnemySetSize = 4;
                 if (!playerPhaseDone && !enemyMovingPhase)
                 {
                     HandlePlayerPhase();
@@ -304,7 +306,7 @@ public class Game_Manager : MonoBehaviour
             enemyMovingPhase = true;
             playerPhaseDone = false;
             enemyManager.InitCurrentEnemySet(curEnemySet,curEnemySetSize);
-            CreateButtonSequence();
+            //CreateButtonSequence();
             
            
         }
@@ -312,8 +314,7 @@ public class Game_Manager : MonoBehaviour
     }
     public void HandleLockOn()
     {
-      
-        
+     
         if (!playerLockingOn)
         {
             currentEnemyIndex = (int)(Random.Range(0, curEnemySetSize));
@@ -327,8 +328,6 @@ public class Game_Manager : MonoBehaviour
             curEnemySet[currentEnemyIndex].LockOn(true);
             playerLockingOn = true;
         }
-        
-        
 
 
 
@@ -416,6 +415,7 @@ public class Game_Manager : MonoBehaviour
             print("you lost bitch");
             timeRanOut = false;
             CreateButtonSequence();
+            curEnemy.Attack();
             
         }
         
@@ -436,21 +436,21 @@ public class Game_Manager : MonoBehaviour
             CameraLerp(true);
 
             HandleLockOn();
-            HandleSequencePhase();
+            if (staff.fadeInFinished)
+            {
+                if(!sequenceReady)
+                {
+                    CreateButtonSequence();
+                    sequenceReady = true;
+                }
+                else
+                {
+                    HandleSequencePhase();
+                }
+                
+            }
+            
 
-
-
-            /* if (Input.GetButtonDown("HectorAttack"))
-             {
-
-                 if (Time.time > timestamp)
-                     {
-                         player.Attack(curEnemy);
-                         timestamp = Time.time + (2.1F * attackRate);
-                         dontTurnCamera = true;                 
-                     }   
-
-             }*/
 
             if (curEnemy.dead)
             {
@@ -511,6 +511,7 @@ public class Game_Manager : MonoBehaviour
         dontTurnCamera = false;
         DeLaCruzMoved = false;
         enemiesDead = false;
+        sequenceReady = false;
     }
     public void resetForNextPhase()
     {

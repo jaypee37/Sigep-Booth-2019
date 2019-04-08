@@ -94,6 +94,7 @@ public class CameraFollow : MonoBehaviour
         {
             if (!lerpBackward)
             {
+                print("fade out");
                 StartCoroutine(WaitForLerp());
 
             }

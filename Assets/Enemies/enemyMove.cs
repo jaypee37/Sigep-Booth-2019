@@ -73,10 +73,10 @@ public class enemyMove : MonoBehaviour
     {
         yield return new WaitForSeconds(5.4f);
         player.DoneGettingAttacked();
-        yield return new WaitForSeconds(time - 5.4f);
+        //yield return new WaitForSeconds(time - 5.4f);
         animator.SetBool("Attack", false);
         finishedAttacking = true;
-        FinishedAttack();
+        //FinishedAttack();
        // print("i finished attacking");
        
         StopCoroutine(WaitForAttack(time));
@@ -171,8 +171,8 @@ public class enemyMove : MonoBehaviour
         
         animator.SetBool("Run", false);
         animator.SetBool("Attack",true);
-        int time = Random.Range(6, 9);
-        StartCoroutine(WaitForAttack(time));
+        //int time = Random.Range(6, 9);
+        StartCoroutine(WaitForAttack(5));
         player.GettingAttacked(this);
 
     }
