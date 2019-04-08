@@ -36,6 +36,10 @@ public class Game_Manager : MonoBehaviour
     bool cameraSetForNextPhase = false;
     bool enemiesDead = false;
     public NoteStaff staff;
+    public GameObject pCube1;
+    private bool canFade;
+    private Color alphaColor;
+    private float timeToFade = 1.0f;
 
 
     enum phases
@@ -58,8 +62,10 @@ public class Game_Manager : MonoBehaviour
         dontTurnCamera = false;
         attacking = false;
         Input.ResetInputAxes();
-        
-   
+
+        canFade = false;
+        alphaColor = pCube1.GetComponent<MeshRenderer>().material.color;
+        alphaColor.a = 0;
     }
     IEnumerator WaitForSequence()
     {
@@ -84,8 +90,18 @@ public class Game_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-     
+        if (Input.GetKeyDown("space"))
+        {
+            print("test");
+            canFade = true;
+        }
+
+        if (canFade)
+        {
+            print("test");
+            pCube1.GetComponent<MeshRenderer>().material.color = Color.Lerp(pCube1.GetComponent<MeshRenderer>().material.color, alphaColor, timeToFade * Time.deltaTime);
+        }
+
         switch (currentPhase)
         {
             case phases.Phase1:
