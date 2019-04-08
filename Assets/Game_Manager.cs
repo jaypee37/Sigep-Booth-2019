@@ -35,7 +35,7 @@ public class Game_Manager : MonoBehaviour
     public DeLaCruzMvt DeLaCruz;
     bool cameraSetForNextPhase = false;
     bool enemiesDead = false;
-    public NoteStaff n;
+    public NoteStaff staff;
 
 
     enum phases
@@ -84,10 +84,7 @@ public class Game_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown("space"))
-        {
-            n.Fade();
-        }
+        
      
         switch (currentPhase)
         {
@@ -501,6 +498,7 @@ public class Game_Manager : MonoBehaviour
             {
                 player.resetRotation((int)currentPhase);
                 enemiesDead = true;
+                cam.doneLerping = false;
 
             }
 

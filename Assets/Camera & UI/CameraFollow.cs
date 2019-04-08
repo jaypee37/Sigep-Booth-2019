@@ -22,6 +22,7 @@ public class CameraFollow : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
         //player = GameObject.FindGameObjectWithTag("Player");
         prevLoc = new GameObject();
         lerpLoc = locations[0];
