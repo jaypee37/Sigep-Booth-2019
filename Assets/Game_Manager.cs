@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Game_Manager : MonoBehaviour
 {
@@ -32,6 +33,9 @@ public class Game_Manager : MonoBehaviour
     bool waitingForSequence = false;
     bool DeLaCruzMoved = false;
     public DeLaCruzMvt DeLaCruz;
+    bool cameraSetForNextPhase = false;
+    bool enemiesDead = false;
+    public NoteStaff staff;
 
 
     enum phases
@@ -46,7 +50,6 @@ public class Game_Manager : MonoBehaviour
     bool enemyMovingPhase = false;
 
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -54,6 +57,7 @@ public class Game_Manager : MonoBehaviour
         curEnemySet = new enemyMove[4];
         dontTurnCamera = false;
         attacking = false;
+        Input.ResetInputAxes();
         
    
     }
@@ -63,6 +67,11 @@ public class Game_Manager : MonoBehaviour
         timeRanOut = true;
         waitingForSequence = false;
         StopAllCoroutines();
+
+    }
+    IEnumerator WaitForAwake()
+    {
+        yield return new WaitForSeconds(5);
 
     }
 
@@ -75,11 +84,12 @@ public class Game_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
      
         switch (currentPhase)
         {
             case phases.Phase1:
-                curEnemySetSize = 3;                
+                curEnemySetSize = 1;                
                 
                 if(!playerPhaseDone && !enemyMovingPhase)
                 {
@@ -101,7 +111,7 @@ public class Game_Manager : MonoBehaviour
                 }
                 break;
             case phases.Phase2:
-                curEnemySetSize = 3;
+                curEnemySetSize = 2;
 
                 if (!playerPhaseDone && !enemyMovingPhase)
                 {
@@ -174,13 +184,7 @@ public class Game_Manager : MonoBehaviour
     }
 
   
-    void HandleDeLaCruzPhase()
-    {
-
-        DeLaCruzMoved = DeLaCruz.Move();
-
-    }
-
+    
 
 
 
@@ -193,14 +197,23 @@ public class Game_Manager : MonoBehaviour
             player.playerMoveLoc(playerLocIndex);
             
         }
+
         if(player.isMoveFinished() && player.turnFinished)
         {
             playerPhaseDone = true;
+
         }
-        
-        
 
     }
+
+
+    void HandleDeLaCruzPhase()
+    {
+
+        DeLaCruzMoved = DeLaCruz.Move();
+
+    }
+
 
     void HandleEnemyPhase(phases phase)
     {
@@ -211,8 +224,8 @@ public class Game_Manager : MonoBehaviour
             {
                 case phases.Phase1:
                     enemySet = GameObject.FindGameObjectWithTag("EnemySet1");
-                    curEnemySet = new enemyMove[3];
-                    for (int i = 0; i < 3; i++)
+                    curEnemySet = new enemyMove[1];
+                    for (int i = 0; i < 1; i++)
                     {
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
                         
@@ -227,8 +240,8 @@ public class Game_Manager : MonoBehaviour
                     break;
                 case phases.Phase2:
                     enemySet = GameObject.FindGameObjectWithTag("EnemySet2");
-                    curEnemySet = new enemyMove[3];
-                    for (int i = 0; i < 3; i++)
+                    curEnemySet = new enemyMove[2];
+                    for (int i = 0; i < 2; i++)
                     {
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
                         Vector3 turn = new Vector3();
@@ -293,7 +306,7 @@ public class Game_Manager : MonoBehaviour
             enemyManager.InitCurrentEnemySet(curEnemySet,curEnemySetSize);
             CreateButtonSequence();
             
-
+           
         }
         
     }
@@ -441,54 +454,70 @@ public class Game_Manager : MonoBehaviour
         
 
     }
+    void CameraLerp(bool  flag)
+    {
+        dontTurnCamera = true;
+        cam.lerp(flag);
+        
+        
+    }
 
     public void HandleAttackMode()
     {
-        //dontTurnCamera = true;
-        //cam.lerp();
-        HandleLockOn();
-        HandleSequencePhase();
-        
-        
-
-       /* if (Input.GetButtonDown("HectorAttack"))
+        if(!enemiesDead)
         {
-            
-            if (Time.time > timestamp)
-                {
-                    player.Attack(curEnemy);
-                    timestamp = Time.time + (2.1F * attackRate);
-                    dontTurnCamera = true;                 
-                }   
-            
-        }*/
+            CameraLerp(true);
 
-        if(curEnemy.dead)
-        {
-            curEnemySetDeadCount++;           
-            playerLockingOn = false;
+            HandleLockOn();
+            HandleSequencePhase();
+
+
+
+            /* if (Input.GetButtonDown("HectorAttack"))
+             {
+
+                 if (Time.time > timestamp)
+                     {
+                         player.Attack(curEnemy);
+                         timestamp = Time.time + (2.1F * attackRate);
+                         dontTurnCamera = true;                 
+                     }   
+
+             }*/
+
+            if (curEnemy.dead)
+            {
+                curEnemySetDeadCount++;
+                playerLockingOn = false;
+            }
+
+
+
+
+            if (curEnemySetDeadCount == curEnemySetSize)
+            {
+                player.resetRotation((int)currentPhase);
+                enemiesDead = true;
+                cam.doneLerping = false;
+
+            }
+
+            if (player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
+            {
+                attacking = true;
+            }
+
+            if (attacking && !player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
+            {
+                attacking = false;
+            }
         }
-
-
         
-
-        if (curEnemySetDeadCount == curEnemySetSize)
+        if(enemiesDead)
         {
-           // print("reseting for next phase");
-            player.resetRotation((int)currentPhase);
             resetForNextPhase();
-
-        }
-
-        if (player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack")) 
-        {
-            attacking = true;
         }
         
-        if(attacking && !player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
-        {
-            attacking = false;
-        }
 
     }
 
@@ -498,22 +527,38 @@ public class Game_Manager : MonoBehaviour
         curEnemy.takeDamage();
         //print("finish sent enemy hit");       
     }
-    public void resetForNextPhase()
+
+    void resetVariables()
     {
         enemiesMoving = false;
         playerPhaseDone = false;
         enemyMovingPhase = false;
         player.setMoveFinished(false);
         playerLocIndex += 1;
-        if((int)currentPhase < 4)
+        if ((int)currentPhase < 4)
         {
             currentPhase += 1;
         }
-        
+
         curEnemySetDeadCount = 0;
         dontTurnCamera = false;
         DeLaCruzMoved = false;
-
+        enemiesDead = false;
+    }
+    public void resetForNextPhase()
+    {
+        if (cam.doneLerping)
+        {
+            resetVariables();
+            cam.StopAllCoroutines();
+            cam.doneLerping = true;
+        }
+        else
+        {
+           CameraLerp(false);
+        }
+        
+       
     }
 
 

@@ -40,6 +40,7 @@ public class DeLaCruzMvt : MonoBehaviour
         {
             curLoc = locations[locIndex];
         }
+        allowedToMove = true;
         
 
     }
@@ -60,8 +61,8 @@ public class DeLaCruzMvt : MonoBehaviour
     public bool Move()
     {
         if(locIndex < 3)
-
         {
+
             if (!moving && allowedToMove)
             {
                 StartCoroutine(WaitForMove());
