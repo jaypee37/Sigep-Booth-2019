@@ -12,6 +12,8 @@ public class NoteStaff : MonoBehaviour
     // Use this for initialization
     // Start is called before the first frame update
     bool fadeOut = false;
+    bool fadeIn = false;
+    
     void Start()
     {
         image = GetComponent<Image>();
@@ -20,29 +22,46 @@ public class NoteStaff : MonoBehaviour
         this.image.color = curColor;
     }
 
-    IEnumerator FadeIn()
+    IEnumerator WaitForFade(int i)
     {
-        fadeOut = true;
+        if(i == 1)
+        {
+            fadeIn = true;
+        }
+        else
+        {
+            fadeOut = true;
+        }
+        
         yield return new WaitForSeconds(5.5f);
         fadeOut = false;
+        fadeIn = false;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(fadeOut)
+        if(fadeIn)
         {
             Color curColor = this.image.color;
-            print(curColor.a);
+            //print(curColor.a);
             curColor.a = Mathf.Lerp(curColor.a,1, 0.01f);
+            this.image.color = curColor;
+        }
+        else if (fadeOut)
+        {
+            Color curColor = this.image.color;
+            //print(curColor.a);
+            curColor.a = 0;
             this.image.color = curColor;
         }
 
     }
-    public void Fade()
+    public void Fade(int i)
     {
-        StartCoroutine(FadeIn());
+        StartCoroutine(WaitForFade(i));
     }
+
 
 }
