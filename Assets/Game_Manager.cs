@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Game_Manager : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class Game_Manager : MonoBehaviour
     public DeLaCruzMvt DeLaCruz;
     bool cameraSetForNextPhase = false;
     bool enemiesDead = false;
+    public NoteStaff n;
 
 
     enum phases
@@ -82,6 +84,10 @@ public class Game_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKeyDown("space"))
+        {
+            n.Fade();
+        }
      
         switch (currentPhase)
         {
@@ -108,7 +114,7 @@ public class Game_Manager : MonoBehaviour
                 }
                 break;
             case phases.Phase2:
-                curEnemySetSize = 3;
+                curEnemySetSize = 2;
 
                 if (!playerPhaseDone && !enemyMovingPhase)
                 {
@@ -198,8 +204,7 @@ public class Game_Manager : MonoBehaviour
         if(player.isMoveFinished() && player.turnFinished)
         {
             playerPhaseDone = true;
-            print(DeLaCruzMoved);
-            print(playerPhaseDone);
+
         }
 
     }
@@ -238,8 +243,8 @@ public class Game_Manager : MonoBehaviour
                     break;
                 case phases.Phase2:
                     enemySet = GameObject.FindGameObjectWithTag("EnemySet2");
-                    curEnemySet = new enemyMove[3];
-                    for (int i = 0; i < 3; i++)
+                    curEnemySet = new enemyMove[2];
+                    for (int i = 0; i < 2; i++)
                     {
                         curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
                         Vector3 turn = new Vector3();
@@ -544,10 +549,11 @@ public class Game_Manager : MonoBehaviour
     }
     public void resetForNextPhase()
     {
-        if (cam.GetLerpStatus())
+        if (cam.doneLerping)
         {
             resetVariables();
             cam.StopAllCoroutines();
+            cam.doneLerping = true;
         }
         else
         {
