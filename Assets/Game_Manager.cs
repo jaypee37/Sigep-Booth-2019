@@ -345,6 +345,7 @@ public class Game_Manager : MonoBehaviour
         {
             print(sequence[i]);
         }
+        //Display Buttons Functions
 
         StartCoroutine(WaitForSequence());
     }
@@ -400,7 +401,7 @@ public class Game_Manager : MonoBehaviour
             {
                 StopAllCoroutines();
                 print("completed Sequence");
-                CreateButtonSequence();
+                //CreateButtonSequence();
                 sequenceFinished = false;
                 sequenceIndex = 0;
                 curEnemy.takeDamage();
@@ -434,7 +435,6 @@ public class Game_Manager : MonoBehaviour
         if(!enemiesDead)
         {
             CameraLerp(true);
-
             HandleLockOn();
             if (staff.fadeInFinished)
             {
