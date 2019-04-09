@@ -53,7 +53,11 @@ public class CameraFollow : MonoBehaviour
         doneLerping = true;
         locIndex++;
         print(locIndex);
-        lerpLoc = locations[locIndex];
+        if (locIndex < 4)
+        {
+            lerpLoc = locations[locIndex];
+        }
+        
         lerpBackward = false;
         lerpForward = false;
     }

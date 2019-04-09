@@ -117,6 +117,7 @@ public class NoteStaff : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 Notes[i].sprite = ChooseColor(notes[i]);
+                Notes[i].color = Color.white;
             }
         }
         
@@ -163,6 +164,10 @@ public class NoteStaff : MonoBehaviour
             note.color = curColor;
            
         }
+    }
+    public void GrayOutNote(int i)
+    {
+        Notes[i].color = Color.gray;
     }
     
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using TMPro;
 
 public class Game_Manager : MonoBehaviour
 {
@@ -20,7 +22,7 @@ public class Game_Manager : MonoBehaviour
     bool dontTurnCamera;
     Vector3 curCamPos;
     public CameraFollow cam;
-    public bool attacking;
+    public bool playerAttacking;
     public armMove AttackAnimBehavior;
     public EnemyAttackManager enemyManager;
     bool changeOfDirection = false;
@@ -38,6 +40,12 @@ public class Game_Manager : MonoBehaviour
     public NoteStaff staff;
     bool sequenceReady = false;
     string[] notesForStaff;
+    bool running = false;
+    public Canvas winScreen;
+    public Canvas instructionScreen;
+    bool instructionShown = false;
+
+    
 
 
     enum phases
@@ -47,6 +55,7 @@ public class Game_Manager : MonoBehaviour
         Phase3,
         Phase4
     }
+
     phases currentPhase;
     bool playerPhaseDone = false;
     bool enemyMovingPhase = false;
@@ -58,14 +67,15 @@ public class Game_Manager : MonoBehaviour
         currentPhase = phases.Phase1;
         curEnemySet = new enemyMove[4];
         dontTurnCamera = false;
-        attacking = false;
         Input.ResetInputAxes();
+        running = false;
+        StartCoroutine(WaitForAwake());
         
    
     }
     IEnumerator WaitForSequence()
     {
-        yield return new WaitForSeconds(12);
+        yield return new WaitForSeconds(5);
         timeRanOut = true;
         waitingForSequence = false;
         StopAllCoroutines();
@@ -73,9 +83,24 @@ public class Game_Manager : MonoBehaviour
     }
     IEnumerator WaitForAwake()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3);
+        running = true;
 
     }
+    IEnumerator WaitForEnemyDeath()
+    {
+        yield return new WaitWhile(() => player.isAttacking);
+        curEnemy.takeDamage();
+
+    }
+    IEnumerator WaitForInstructionScreen()
+    {
+        instructionShown = true;
+        yield return new WaitWhile(() => player.isAttacking);
+        curEnemy.takeDamage();
+
+    }
+
 
 
     private void LateUpdate()
@@ -86,109 +111,109 @@ public class Game_Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-     
-        switch (currentPhase)
+        if(running)
         {
-            case phases.Phase1:
-                curEnemySetSize = 1;                
-                
-                if(!playerPhaseDone && !enemyMovingPhase)
-                {
-                    HandlePlayerPhase();
-                }
-                if (!DeLaCruzMoved && playerPhaseDone)
-                {
-                    HandleDeLaCruzPhase();
-                }
+            switch (currentPhase)
+            {
+                case phases.Phase1:
+                    curEnemySetSize = 1;
 
-                if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
-                {
-                    HandleEnemyPhase(currentPhase);
-                    player.playerRot = player.transform.rotation;
-                }
-                if (enemyMovingPhase )
-                {
-                    HandleAttackMode();
-                }
-                break;
-            case phases.Phase2:
-                curEnemySetSize = 2;
+                    if (!playerPhaseDone && !enemyMovingPhase)
+                    {
+                        HandlePlayerPhase();
+                    }
+                    if (!DeLaCruzMoved && playerPhaseDone)
+                    {
+                        HandleDeLaCruzPhase();
+                    }
 
-                if (!playerPhaseDone && !enemyMovingPhase)
-                {
-                    HandlePlayerPhase();
-                }
-                if (!DeLaCruzMoved && playerPhaseDone)
-                {
-                    HandleDeLaCruzPhase();
-                }
+                    if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
+                    {
+                        HandleEnemyPhase(currentPhase);
+                        player.playerRot = player.transform.rotation;
+                    }
+                    if (enemyMovingPhase)
+                    {
+                        HandleAttackMode();
+                    }
+                    break;
+                case phases.Phase2:
+                    curEnemySetSize = 2;
 
-                if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
-                {
-                    HandleEnemyPhase(currentPhase);
-                    player.playerRot = player.transform.rotation;
-                }
-                if (enemyMovingPhase)
-                {
-                    HandleAttackMode();
-                }
-                break;
-            case phases.Phase3:
-                curEnemySetSize = 3;
-                if (!playerPhaseDone && !enemyMovingPhase)
-                {
-                    HandlePlayerPhase();
-                }
-                if (!DeLaCruzMoved && playerPhaseDone)
-                {
-                    HandleDeLaCruzPhase();
-                }
+                    if (!playerPhaseDone && !enemyMovingPhase)
+                    {
+                        HandlePlayerPhase();
+                    }
+                    if (!DeLaCruzMoved && playerPhaseDone)
+                    {
+                        HandleDeLaCruzPhase();
+                    }
 
-                if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
-                {
-                    HandleEnemyPhase(currentPhase);
-                    player.playerRot = player.transform.rotation;
-                }
-                if (enemyMovingPhase)
-                {
-                    HandleAttackMode();
-                }
-                break;
-            case phases.Phase4:
-                curEnemySetSize = 4;
-                if (!playerPhaseDone && !enemyMovingPhase)
-                {
-                    HandlePlayerPhase();
-                }
-                if (!DeLaCruzMoved && playerPhaseDone)
-                {
-                    HandleDeLaCruzPhase();
-                }
+                    if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
+                    {
+                        HandleEnemyPhase(currentPhase);
+                        player.playerRot = player.transform.rotation;
+                    }
+                    if (enemyMovingPhase)
+                    {
+                        HandleAttackMode();
+                    }
+                    break;
+                case phases.Phase3:
+                    curEnemySetSize = 3;
+                    if (!playerPhaseDone && !enemyMovingPhase)
+                    {
+                        HandlePlayerPhase();
+                    }
+                    if (!DeLaCruzMoved && playerPhaseDone)
+                    {
+                        HandleDeLaCruzPhase();
+                    }
 
-                if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
-                {
-                    HandleEnemyPhase(currentPhase);
-                    player.playerRot = player.transform.rotation;
-                }
-                if (enemyMovingPhase)
-                {
-                    HandleAttackMode();
-                }
-                break;
-            default:
-                print("end of game");
-                break;
+                    if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
+                    {
+                        HandleEnemyPhase(currentPhase);
+                        player.playerRot = player.transform.rotation;
+                    }
+                    if (enemyMovingPhase)
+                    {
+                        HandleAttackMode();
+                    }
+                    break;
+                case phases.Phase4:
+                    curEnemySetSize = 4;
+                    if (!playerPhaseDone && !enemyMovingPhase)
+                    {
+                        HandlePlayerPhase();
+                    }
+                    if (!DeLaCruzMoved && playerPhaseDone)
+                    {
+                        HandleDeLaCruzPhase();
+                    }
+
+                    if (DeLaCruzMoved && playerPhaseDone && !enemyMovingPhase)
+                    {
+                        HandleEnemyPhase(currentPhase);
+                        player.playerRot = player.transform.rotation;
+                    }
+                    if (enemyMovingPhase)
+                    {
+                        HandleAttackMode();
+                    }
+                    break;
+                default:                    
+                    SceneHandler.instance.SetFadedAndCanvas(true,winScreen);
+                    SceneHandler.instance.ChangeScene(SceneHandler.Scene.Win);
+                    break;
+            }
         }
+     
+        
 
         
        
 
     }
-
-  
-    
-
 
 
     void HandlePlayerPhase()
@@ -217,7 +242,7 @@ public class Game_Manager : MonoBehaviour
 
     }
 
-
+    #region HandleEnemyPhase
     void HandleEnemyPhase(phases phase)
     {
    
@@ -315,6 +340,7 @@ public class Game_Manager : MonoBehaviour
         }
         
     }
+    #endregion
     public void HandleLockOn()
     {
      
@@ -389,7 +415,8 @@ public class Game_Manager : MonoBehaviour
                 
 
                 if (curColor == sequence[sequenceIndex])
-                { 
+                {
+                    staff.GrayOutNote(sequenceIndex);
                     sequenceIndex++;
                     if (sequenceIndex == 4)
                     {
@@ -407,9 +434,10 @@ public class Game_Manager : MonoBehaviour
                 CreateButtonSequence();
                 sequenceFinished = false;
                 sequenceIndex = 0;
-                curEnemy.takeDamage();
                 StopAllCoroutines();
                 staff.FadeOutNotes();
+                player.Attack();
+                StartCoroutine(WaitForEnemyDeath());
             }
         }
         else
@@ -453,15 +481,17 @@ public class Game_Manager : MonoBehaviour
               
                 if(!staff.notesFade && curEnemy.finishedAttacking)
                 {
+                    if(currentPhase == phases.Phase1 && !instructionShown)
+                    {
+                        StartCoroutine(WaitForInstructionScreen());
+                    }
                     staff.FadeNotes(1, sequence);
                 }
-                else if (staff.notesFade && sequenceReady)
+                if (staff.notesFade && sequenceReady)
                 {
                     HandleSequencePhase();
                 }
-                
-                
-                
+
                 
             }
             CameraLerp(true);
@@ -471,6 +501,7 @@ public class Game_Manager : MonoBehaviour
 
             if (curEnemy.dead)
             {
+               
                 curEnemySetDeadCount++;
                 playerLockingOn = false;
                 staff.FadeOutNotes();
@@ -489,19 +520,11 @@ public class Game_Manager : MonoBehaviour
                     staff.FadeNotes(1, sequence);
                 }
                 
+                
+                
 
             }
 
-
-            if (player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
-            {
-                attacking = true;
-            }
-
-            if (attacking && !player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
-            {
-                attacking = false;
-            }
         }
         
         if(enemiesDead)

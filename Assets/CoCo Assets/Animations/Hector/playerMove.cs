@@ -31,7 +31,7 @@ public class playerMove : MonoBehaviour
     bool tookDamage = false;
     int locIndex = 0;
     public bool turnFinished = false;
-
+    public bool isAttacking = false;
 
     // Start is called before the first frame update
     void Start()
@@ -104,6 +104,11 @@ public class playerMove : MonoBehaviour
 
 
     }
+    IEnumerator WaitForAttack()
+    {
+        yield return new WaitForSeconds(2.5f);
+        isAttacking = false;
+    }
 
 
     // Update is called once per frame
@@ -161,11 +166,11 @@ public class playerMove : MonoBehaviour
                 animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
     }
 
-    public void Attack(enemyMove enemy)
+    public void Attack()
     {
-
+        isAttacking = true;
         animator.SetTrigger("Attack");
-        transform.LookAt(enemy.transform);
+       
 
     }
     public void resetRotation(int i)
