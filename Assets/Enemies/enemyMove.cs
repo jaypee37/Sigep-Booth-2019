@@ -22,7 +22,7 @@ public class enemyMove : MonoBehaviour
     public Transform loc2;
     public bool enemyAttacking;
     public EnemyAttackManager attackManager;
-    bool finishedAttacking = false;
+     public bool finishedAttacking = true;
     public playerMove player;
     public GameObject grunt;
    
@@ -166,9 +166,9 @@ public class enemyMove : MonoBehaviour
 
     public void Attack()
     {
-        
 
-        
+
+        finishedAttacking = false;
         animator.SetBool("Run", false);
         animator.SetBool("Attack",true);
         //int time = Random.Range(6, 9);
