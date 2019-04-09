@@ -37,6 +37,7 @@ public class Game_Manager : MonoBehaviour
     bool enemiesDead = false;
     public NoteStaff staff;
     bool sequenceReady = false;
+    string[] notesForStaff;
 
 
     enum phases
@@ -306,6 +307,8 @@ public class Game_Manager : MonoBehaviour
             enemyMovingPhase = true;
             playerPhaseDone = false;
             enemyManager.InitCurrentEnemySet(curEnemySet,curEnemySetSize);
+            staff.notesFade = false;
+            staff.fadeInFinished = false;
             //CreateButtonSequence();
             
            
@@ -336,15 +339,16 @@ public class Game_Manager : MonoBehaviour
     public void CreateButtonSequence()
     {
         
-        sequence = new string[3];
-        for (int i = 0; i < 3; i++)
+        sequence = new string[4];
+        for (int i = 0; i < 4; i++)
         {
             sequence[i] = buttons[(int)Random.Range(0, 4)];
         }
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
             print(sequence[i]);
         }
+        //Display Buttons Functions
 
         StartCoroutine(WaitForSequence());
     }
@@ -387,7 +391,7 @@ public class Game_Manager : MonoBehaviour
                 if (curColor == sequence[sequenceIndex])
                 { 
                     sequenceIndex++;
-                    if (sequenceIndex == 3)
+                    if (sequenceIndex == 4)
                     {
                         sequenceFinished = true;
                     }
@@ -405,6 +409,7 @@ public class Game_Manager : MonoBehaviour
                 sequenceIndex = 0;
                 curEnemy.takeDamage();
                 StopAllCoroutines();
+                staff.FadeOutNotes();
             }
         }
         else
@@ -414,9 +419,11 @@ public class Game_Manager : MonoBehaviour
             sequenceIndex = 0;
             print("you lost bitch");
             timeRanOut = false;
-            CreateButtonSequence();
+            //CreateButtonSequence();
             curEnemy.Attack();
-            
+            sequenceReady = false;
+            staff.notesFade = false;
+           
         }
         
 
@@ -424,7 +431,7 @@ public class Game_Manager : MonoBehaviour
     void CameraLerp(bool  flag)
     {
         dontTurnCamera = true;
-        cam.lerp(flag);
+        cam.lerp(flag,sequence);
         
         
     }
@@ -433,41 +440,58 @@ public class Game_Manager : MonoBehaviour
     {
         if(!enemiesDead)
         {
-            CameraLerp(true);
-
             HandleLockOn();
+            if (!sequenceReady && curEnemy.finishedAttacking)
+            {
+                print("button sequecne");
+                CreateButtonSequence();
+                sequenceReady = true;
+            }
+            
             if (staff.fadeInFinished)
             {
-                if(!sequenceReady)
+              
+                if(!staff.notesFade && curEnemy.finishedAttacking)
                 {
-                    CreateButtonSequence();
-                    sequenceReady = true;
+                    staff.FadeNotes(1, sequence);
                 }
-                else
+                else if (staff.notesFade && sequenceReady)
                 {
                     HandleSequencePhase();
                 }
                 
+                
+                
+                
             }
-            
+            CameraLerp(true);
+
+
 
 
             if (curEnemy.dead)
             {
                 curEnemySetDeadCount++;
                 playerLockingOn = false;
+                staff.FadeOutNotes();
+                print("enemyDead");
+                if (curEnemySetDeadCount == curEnemySetSize)
+                {
+                    player.resetRotation((int)currentPhase);
+                    enemiesDead = true;
+                    cam.doneLerping = false;
+
+                }
+                if (!enemiesDead)
+                {
+                    CreateButtonSequence();
+                    staff.notesFade = false;
+                    staff.FadeNotes(1, sequence);
+                }
+                
+
             }
 
-
-
-
-            if (curEnemySetDeadCount == curEnemySetSize)
-            {
-                player.resetRotation((int)currentPhase);
-                enemiesDead = true;
-                cam.doneLerping = false;
-
-            }
 
             if (player.animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
             {
@@ -512,6 +536,7 @@ public class Game_Manager : MonoBehaviour
         DeLaCruzMoved = false;
         enemiesDead = false;
         sequenceReady = false;
+        staff.fadeInFinished = false;
     }
     public void resetForNextPhase()
     {
@@ -524,6 +549,7 @@ public class Game_Manager : MonoBehaviour
         else
         {
            CameraLerp(false);
+
         }
         
        
