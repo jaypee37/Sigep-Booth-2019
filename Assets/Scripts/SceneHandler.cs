@@ -53,6 +53,9 @@ public class SceneHandler : MonoBehaviour
         DontDestroyOnLoad(_fadeCanvas.gameObject);
         _fadeImage = _fadeCanvas.GetComponentInChildren<Image>();
         _faded = false;
+        
+
+        
     }
 
     #endregion
@@ -71,6 +74,7 @@ public class SceneHandler : MonoBehaviour
                 SceneManager.LoadScene("JayPee Scene", LoadSceneMode.Single);
                 break;
             case Scene.Win:
+                SceneManager.LoadScene("Win", LoadSceneMode.Single);
                 break;
             case Scene.Loss:
                 break;
@@ -103,6 +107,12 @@ public class SceneHandler : MonoBehaviour
 
     public float GetFadeTime() {
         return _fadeTime;
+    }
+
+    public void SetFadedAndCanvas(bool state, Canvas canvas)
+    {
+        _faded = state;
+        _fadeCanvas = canvas;
     }
 
     #endregion
