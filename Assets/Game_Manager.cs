@@ -48,6 +48,8 @@ public class Game_Manager : MonoBehaviour
     public TextMeshProUGUI numberText;
     bool setMovingEnemies = false;
     bool ActiveButtons = false;
+    Quaternion prevPlayerRotation;
+    bool lerpCalled;
 
     
 
@@ -99,6 +101,7 @@ public class Game_Manager : MonoBehaviour
         yield return new WaitWhile(() => player.isAttacking );
         StartCoroutine(WaitForEnemyDeath());
         sequenceReady = false;
+        player.transform.rotation = prevPlayerRotation;
         
 
     }
@@ -466,6 +469,8 @@ public class Game_Manager : MonoBehaviour
                 sequenceIndex = 0;
                 
                 staff.FadeOutNotes();
+                prevPlayerRotation = player.transform.rotation;
+                player.transform.LookAt(curEnemy.transform);
                 player.Attack();                
                 
                 StartCoroutine(WaitForPLayerAttack());
@@ -496,7 +501,12 @@ public class Game_Manager : MonoBehaviour
     void CameraLerp(bool  flag)
     {
         dontTurnCamera = true;
-        cam.lerp(flag,sequence);
+        if(!lerpCalled)
+        {
+            lerpCalled = true;
+            cam.lerpIn(flag, sequence);
+        }
+        
         
         
     }
@@ -610,6 +620,7 @@ public class Game_Manager : MonoBehaviour
         staff.fadeInFinished = false;
         timer_Started = false;
         setMovingEnemies = false;
+        lerpCalled = false;
     }
     public void resetForNextPhase()
     {
@@ -621,7 +632,7 @@ public class Game_Manager : MonoBehaviour
         }
         else
         {
-           CameraLerp(false);
+           cam.lerpOut();
 
         }
         
