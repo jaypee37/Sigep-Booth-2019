@@ -46,6 +46,8 @@ public class Game_Manager : MonoBehaviour
     bool instructionShown = false;
     bool timer_Started = false;
     public TextMeshProUGUI numberText;
+    bool setMovingEnemies = false;
+    bool ActiveButtons = false;
 
     
 
@@ -79,16 +81,7 @@ public class Game_Manager : MonoBehaviour
     {
         staff.FadeTimerNumbersInandOut();
         timer_Started = true;
-        yield return new WaitForSeconds(1);
-        print("1");
-        yield return new WaitForSeconds(1);
-        print("2");
-        yield return new WaitForSeconds(1);
-        print("3");
-        yield return new WaitForSeconds(1);
-        print("4");
-        yield return new WaitForSeconds(1);
-        print("5");
+        yield return new WaitWhile(() => staff.fading);       
         timer_Started = false;
         timeRanOut = true;
         waitingForSequence = false;
@@ -101,10 +94,28 @@ public class Game_Manager : MonoBehaviour
         running = true;
 
     }
+    IEnumerator WaitForPLayerAttack()
+    {
+        yield return new WaitWhile(() => player.isAttacking );
+        StartCoroutine(WaitForEnemyDeath());
+        sequenceReady = false;
+        
+
+    }
+    IEnumerator WaitForEnemyAttack()
+    {
+        yield return new WaitUntil(() => curEnemy.finishedAttacking);
+        sequenceReady = false;
+        timer_Started = false;
+        timeRanOut = false;
+        
+
+    }
     IEnumerator WaitForEnemyDeath()
     {
-        yield return new WaitWhile(() => player.isAttacking);
         curEnemy.takeDamage();
+        yield return new WaitWhile(() => player.isAttacking);
+        
 
     }
     IEnumerator WaitForInstructionScreen()
@@ -262,65 +273,70 @@ public class Game_Manager : MonoBehaviour
    
         if(!enemiesMoving)
         {
-            switch (phase)
+            if(!setMovingEnemies)
             {
-                case phases.Phase1:
-                    enemySet = GameObject.FindGameObjectWithTag("EnemySet1");
-                    curEnemySet = new enemyMove[1];
-                    for (int i = 0; i < 1; i++)
-                    {
-                        curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
-                        
-                      
-                        Vector3 turn = new Vector3();
-                        turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z - 2);
-                        GameObject t = new GameObject();
-                        t.transform.position = turn;
+                switch (phase)
+                {
+                    case phases.Phase1:
+                        enemySet = GameObject.FindGameObjectWithTag("EnemySet1");
+                        curEnemySet = new enemyMove[1];
+                        for (int i = 0; i < 1; i++)
+                        {
+                            curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
 
-                        curEnemySet[i].SetTurnVector(turn,t);
-                    }
-                    break;
-                case phases.Phase2:
-                    enemySet = GameObject.FindGameObjectWithTag("EnemySet2");
-                    curEnemySet = new enemyMove[2];
-                    for (int i = 0; i < 2; i++)
-                    {
-                        curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
-                        Vector3 turn = new Vector3();
-                        turn.Set(curEnemySet[i].loc.position.x - 2, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
-                        GameObject t = new GameObject();
-                        t.transform.position = turn;
-                        curEnemySet[i].SetTurnVector(turn,t);
-                    }
-                    break;
-                case phases.Phase3:
-                    enemySet = GameObject.FindGameObjectWithTag("EnemySet3");
-                    curEnemySet = new enemyMove[3];
-                    for (int i = 0; i < 3; i++)
-                    {
-                        curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
-                        Vector3 turn = new Vector3();
-                        turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
-                        GameObject t = new GameObject();
-                        t.transform.position = turn;
-                        curEnemySet[i].SetTurnVector(turn,t);
-                    }
-                    break;
-                case phases.Phase4:
-                    enemySet = GameObject.FindGameObjectWithTag("EnemySet4");
-                    curEnemySet = new enemyMove[4];
-                    for (int i = 0; i < 4; i++)
-                    {
-                        curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
-                        Vector3 turn = new Vector3();
-                        turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
-                        GameObject t = new GameObject();
-                        t.transform.position = turn;
-                        curEnemySet[i].SetTurnVector(turn,t);
-                    }
-                    break;
 
+                            Vector3 turn = new Vector3();
+                            turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z - 2);
+                            GameObject t = new GameObject();
+                            t.transform.position = turn;
+
+                            curEnemySet[i].SetTurnVector(turn, t);
+                        }
+                        break;
+                    case phases.Phase2:
+                        enemySet = GameObject.FindGameObjectWithTag("EnemySet2");
+                        curEnemySet = new enemyMove[2];
+                        for (int i = 0; i < 2; i++)
+                        {
+                            curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
+                            Vector3 turn = new Vector3();
+                            turn.Set(curEnemySet[i].loc.position.x - 2, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
+                            GameObject t = new GameObject();
+                            t.transform.position = turn;
+                            curEnemySet[i].SetTurnVector(turn, t);
+                        }
+                        break;
+                    case phases.Phase3:
+                        enemySet = GameObject.FindGameObjectWithTag("EnemySet3");
+                        curEnemySet = new enemyMove[3];
+                        for (int i = 0; i < 3; i++)
+                        {
+                            curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
+                            Vector3 turn = new Vector3();
+                            turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
+                            GameObject t = new GameObject();
+                            t.transform.position = turn;
+                            curEnemySet[i].SetTurnVector(turn, t);
+                        }
+                        break;
+                    case phases.Phase4:
+                        enemySet = GameObject.FindGameObjectWithTag("EnemySet4");
+                        curEnemySet = new enemyMove[4];
+                        for (int i = 0; i < 4; i++)
+                        {
+                            curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
+                            Vector3 turn = new Vector3();
+                            turn.Set(curEnemySet[i].loc.position.x, curEnemySet[i].loc.position.y, curEnemySet[i].loc.position.z);
+                            GameObject t = new GameObject();
+                            t.transform.position = turn;
+                            curEnemySet[i].SetTurnVector(turn, t);
+                        }
+                        break;
+
+                }
+                setMovingEnemies = true;
             }
+            
 
             foreach (enemyMove e in curEnemySet)
             {
@@ -398,7 +414,7 @@ public class Game_Manager : MonoBehaviour
         
         if(!timeRanOut)
         {
-            if (!sequenceFinished)
+            if (!sequenceFinished && ActiveButtons)
             {
                 string curColor;
 
@@ -428,7 +444,7 @@ public class Game_Manager : MonoBehaviour
                 }
                 
 
-                if (curColor == sequence[sequenceIndex])
+                if (curColor == sequence[sequenceIndex] || Input.GetButtonDown("Submit"))
                 {
                     staff.GrayOutNote(sequenceIndex);
                     sequenceIndex++;
@@ -446,12 +462,16 @@ public class Game_Manager : MonoBehaviour
                 StopAllCoroutines();
                 print("completed Sequence");                
                 sequenceFinished = false;
+                //sequenceReady = false;
                 sequenceIndex = 0;
-                StopAllCoroutines();
-                staff.FadeOutNotes();
-                player.Attack();
                 
-                StartCoroutine(WaitForEnemyDeath());
+                staff.FadeOutNotes();
+                player.Attack();                
+                
+                StartCoroutine(WaitForPLayerAttack());
+                staff.StopTimer();
+                ActiveButtons = false;
+
             }
         }
         else
@@ -462,10 +482,13 @@ public class Game_Manager : MonoBehaviour
             print("you lost bitch");
             timeRanOut = false;
             curEnemy.Attack();
-            sequenceReady = false;
+
             staff.notesFade = false;            
             StopCoroutine(WaitForSequence());
-           
+            StartCoroutine(WaitForEnemyAttack());
+            staff.StopTimer();
+            ActiveButtons = false;
+
         }
         
 
@@ -483,7 +506,7 @@ public class Game_Manager : MonoBehaviour
         if(!enemiesDead)
         {
             HandleLockOn();
-            if (!sequenceReady && curEnemy.finishedAttacking)
+            if (!sequenceReady)
             {
                 print("button sequecne");
                 CreateButtonSequence();
@@ -497,6 +520,7 @@ public class Game_Manager : MonoBehaviour
               
                 if(!staff.notesFade && curEnemy.finishedAttacking)
                 {
+                    print("1");
                     if(currentPhase == phases.Phase1 && !instructionShown)
                     {
                         StartCoroutine(WaitForInstructionScreen());
@@ -505,15 +529,15 @@ public class Game_Manager : MonoBehaviour
                 }
                 if (staff.notesFade && sequenceReady)
                 {
-                    HandleSequencePhase();
-                    if (!timer_Started && curEnemy.finishedAttacking)
+                    
+                    if (!timer_Started && curEnemy.finishedAttacking && !player.isAttacking)
                     {
                         print("in here");
                         StartCoroutine(WaitForSequence());
+                        ActiveButtons = true;
                     }
-                   
-                    
-                    
+                    HandleSequencePhase();
+
                 }
 
                 
@@ -523,7 +547,7 @@ public class Game_Manager : MonoBehaviour
 
 
 
-            if (curEnemy.dead && timer_Started)
+            if (curEnemy.dead && curEnemy.finishedAttacking && !player.isAttacking)
             {
                
                 curEnemySetDeadCount++;
@@ -539,10 +563,9 @@ public class Game_Manager : MonoBehaviour
                 }
                 if (!enemiesDead)
                 {
-                    
+                    print("killed one enemy");
                     staff.notesFade = false;
                     staff.FadeNotes(1, sequence);
-                    sequenceReady = false;
                 }
                 
                 
@@ -586,6 +609,7 @@ public class Game_Manager : MonoBehaviour
         sequenceReady = false;
         staff.fadeInFinished = false;
         timer_Started = false;
+        setMovingEnemies = false;
     }
     public void resetForNextPhase()
     {

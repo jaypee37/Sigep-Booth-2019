@@ -170,6 +170,7 @@ public class playerMove : MonoBehaviour
     {
         isAttacking = true;
         animator.SetTrigger("Attack");
+        StartCoroutine(WaitForAttack());
        
 
     }

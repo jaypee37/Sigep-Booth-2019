@@ -25,8 +25,11 @@ public class NoteStaff : MonoBehaviour
     bool numberFadeIn = false;
     bool numberFadeOut = false;
     float _timeElapsed;
-    bool fading = false;
+    public bool fading = false;
     int numberTextIndex = 5;
+    float staffFadeTime = 2;
+    float staffFadeTimeElapsed;
+    
     
     void Start()
     {
@@ -67,44 +70,23 @@ public class NoteStaff : MonoBehaviour
        
     }
 
-    IEnumerator WaitForStaffFade(int i, string[] notes)
-    {
-        
-        if(i == 1)
-        {
-            fadeIn = true;
-        }
-        else if(i == 2)
-        {
-            
-            fadeOut = true;
-            
-        }
-       
-        yield return new WaitUntil(() => image.color.a > .95f);
-        
-        fadeOut = false;
-        fadeIn = false;
-        fadeInFinished = true;
-
-        print("done fading");
-
-    }
-
+ 
     IEnumerator WaitForFadeTimerNumbers()
     {
         numberFadeIn = true;
         fading = true;
         numberText.text = "5";
         numberTextIndex = 5;
-        
-        yield return new WaitForSeconds(5f);
+
+        print("open up timer");
+        timerImage = timer.GetComponent<Image>();
+        Color timerColor = timerImage.color;
+        timerColor.a = 1;
+        timerImage.color = timerColor;
+
+        yield return new WaitForSeconds(0);
         
 
-        /*numberFadeIn = false;
-        numberFadeOut = true;
-        yield return new WaitForSeconds(.5f);
-        numberFadeOut = false;*/
 
     }
 
@@ -114,15 +96,25 @@ public class NoteStaff : MonoBehaviour
         
         if (fadeIn)
         {
+            
+
+            staffFadeTimeElapsed += Time.deltaTime;
+            if (staffFadeTimeElapsed >= staffFadeTime)
+            {
+                fadeIn = false;
+                fadeOut = false;
+                fadeInFinished = true;
+               
+                
+            }
+
             Color curColor = this.image.color;
-            curColor.a = Mathf.Lerp(curColor.a,1, 0.05f);
+            curColor.a = (staffFadeTimeElapsed / staffFadeTime);
             this.image.color = curColor;
 
             Color timerColor = timerImage.color;
-            timerColor.a = Mathf.Lerp(timerColor.a, 1, 0.05f); ;
+            timerColor.a = (staffFadeTimeElapsed / staffFadeTime);
             timerImage.color = timerColor;
-
-
 
         }
        
@@ -133,9 +125,7 @@ public class NoteStaff : MonoBehaviour
             curColor.a = 0;
             this.image.color = curColor;
 
-            /*Color timerColor = timerImage.color;
-            timerColor.a = 0;
-            timerImage.color = timerColor;*/
+           
             FadeOutNotes();
         }
         if(setNotes)
@@ -181,15 +171,41 @@ public class NoteStaff : MonoBehaviour
      
 
     }
+
+    public void StopTimer()
+    {
+        StopAllCoroutines();
+        fading = false;
+        numberTextIndex = 5;
+        Color timerColor = numberText.color;
+        timerColor.a = 0;
+        numberText.color = timerColor;
+
+        timerColor = timerImage.color;
+        timerColor.a = 0;
+        timerImage.color = timerColor;
+        
+    }
     public void FadeTimerNumbersInandOut()
     {
         StartCoroutine(WaitForFadeTimerNumbers());
     }
-    public void Fade(int i,string[] notes)
+    public void FadeStaff(int i, string[] notes)
     {
+        staffFadeTimeElapsed = 0;
         fadeInFinished = false;
-        StartCoroutine(WaitForStaffFade(i,notes));
+        if (i == 1)
+        {
+            fadeIn = true;
+        }
+        else if (i == 2)
+        {
+
+            fadeOut = true;
+
+        }
     }
+        
     public void FadeNotes(int i,string[] notes)
     {
         notesFade = false;
