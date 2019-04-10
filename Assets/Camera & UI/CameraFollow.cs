@@ -21,6 +21,7 @@ public class CameraFollow : MonoBehaviour
     public NoteStaff n;
     bool lerpingBitttch = false;
     Vector3 goal2;
+    public bool donelerpingIn = false;
 
     // Use this for initialization
     void Start()
@@ -41,13 +42,14 @@ public class CameraFollow : MonoBehaviour
     {
         yield return new WaitWhile(() => goal.magnitude > 0.2f);
         print("done lerping");
-        n.Fade(1,notes);
+        n.FadeStaff(1,notes);
+        donelerpingIn = true;
     }
 
     IEnumerator WaitForLerp()
 
     {
-        n.Fade(2,null);
+        n.FadeStaff(2,null);
         lerpBackward = true;
         yield return new  WaitWhile(() => goal2.magnitude > 0.2f);
         doneLerping = true;
@@ -83,6 +85,7 @@ public class CameraFollow : MonoBehaviour
         {
             if (!lerpForward)
             {
+                doneLerping = false;
                 print("lerp in");
                 StartCoroutine(WaitForFade(notes));
                 prevLoc.transform.position = transform.position;

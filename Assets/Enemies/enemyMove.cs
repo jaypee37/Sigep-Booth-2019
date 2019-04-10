@@ -25,10 +25,12 @@ public class enemyMove : MonoBehaviour
      public bool finishedAttacking = true;
     public playerMove player;
     public GameObject grunt;
+    bool idle = true;
    
     // Start is called before the first frame update
     void Start()
     {
+        gameObject.SetActive(false);
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = true;
         pSystem = transform.GetComponentInChildren<ParticleSystem>();
@@ -56,6 +58,7 @@ public class enemyMove : MonoBehaviour
         //yield return new WaitForSeconds(1);
         enemyAttacking = true;
         moveFinished = true;
+        moving = false;
         GameObject g = new GameObject();
         Vector3 v = new Vector3(player.transform.position.x, 0, player.transform.position.z);
         g.transform.position = v;
@@ -72,13 +75,9 @@ public class enemyMove : MonoBehaviour
     IEnumerator WaitForAttack(int time)
     {
         yield return new WaitForSeconds(5.4f);
-        player.DoneGettingAttacked();
-        //yield return new WaitForSeconds(time - 5.4f);
+        print("enemy attack");
         animator.SetBool("Attack", false);
         finishedAttacking = true;
-        //FinishedAttack();
-       // print("i finished attacking");
-       
         StopCoroutine(WaitForAttack(time));
      
 
@@ -95,7 +94,6 @@ public class enemyMove : MonoBehaviour
 
         if (health == 0 && !dead)
         {
-           
             animator.SetBool("Attack", false);
             animator.SetBool("Run", false);
             attackManager.enemyFinishedAttacking();
@@ -108,12 +106,13 @@ public class enemyMove : MonoBehaviour
         }
         if (moveFinished)
         {
-            //transform.position = loc2.position;
+            transform.position = loc2.position;
         }
-
+        
     }
     public void enemyMoveLoc()
     {
+        gameObject.SetActive(true);
         moving = true;
         agent.updatePosition = true;
         agent.updateRotation = true;
@@ -173,7 +172,6 @@ public class enemyMove : MonoBehaviour
         animator.SetBool("Attack",true);
         //int time = Random.Range(6, 9);
         StartCoroutine(WaitForAttack(5));
-        player.GettingAttacked(this);
 
     }
 
