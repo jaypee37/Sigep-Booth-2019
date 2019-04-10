@@ -4,8 +4,10 @@
     {
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
+		_NormalTex ("Normal Map", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
+		_MetallicTex("Metallic Map", 2D) = "white" {}
 
 		_EmissiveTex ("Emission Map", 2D) = "white" {}
 		_OnButtonColor ("On Button Color", Color) = (1, 1, 1, 1)
@@ -25,6 +27,8 @@
         #pragma target 3.0
 
         sampler2D _MainTex;
+		sampler2D _NormalTex;
+		sampler2D _MetallicTex;
 		sampler2D _EmissiveTex;
 
         struct Input
@@ -51,8 +55,9 @@
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             o.Albedo = c.rgb;
+			o.Normal = tex2D(_NormalTex, IN.uv_MainTex);
             // Metallic and smoothness come from slider variables
-            o.Metallic = _Metallic;
+            o.Metallic = tex2D (_MetallicTex, IN.uv_MainTex) * _Metallic;
             o.Smoothness = _Glossiness;
 			fixed4 eCol = tex2D (_EmissiveTex, IN.uv_MainTex);
 			o.Emission = eCol.r * _Button1Color + eCol.g * _Button2Color + eCol.b * _OnButtonColor;
