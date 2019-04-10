@@ -26,6 +26,7 @@ public class NoteStaff : MonoBehaviour
     bool numberFadeOut = false;
     float _timeElapsed;
     bool fading = false;
+    int numberTextIndex = 5;
     
     void Start()
     {
@@ -94,24 +95,11 @@ public class NoteStaff : MonoBehaviour
     {
         numberFadeIn = true;
         fading = true;
-        
-        yield return new WaitForSeconds(1f);
-        numberText.text = "4";
-        yield return new WaitForSeconds(1f);
-        numberText.text = "3";
-        yield return new WaitForSeconds(1f);
-        numberText.text = "2";
-        yield return new WaitForSeconds(1f);
-        numberText.text = "1";
-        yield return new WaitForSeconds(1f);
-        numberText.text = "0";
-        yield return new WaitForSeconds(1f);
-        fading = false;
-        numberFadeIn = true;
-        Color numColor = numberText.color;
-        numColor.a = 0;
-        numberText.color = numColor;
         numberText.text = "5";
+        numberTextIndex = 5;
+        
+        yield return new WaitForSeconds(5f);
+        
 
         /*numberFadeIn = false;
         numberFadeOut = true;
@@ -160,12 +148,35 @@ public class NoteStaff : MonoBehaviour
             _timeElapsed += Time.deltaTime;
             if (_timeElapsed >= .5f)
             {
-                _timeElapsed = 0f;
-                numberFadeIn = !numberFadeIn;
+                if (!numberFadeIn && numberTextIndex == 0)
+                {
+                    fading = false;
+                    numberTextIndex = 5;
+                    Color timerColor = numberText.color;
+                    timerColor.a = 0;
+                    numberText.color = timerColor;
+
+                }
+                else
+                {
+                    _timeElapsed = 0f;
+                    if (!numberFadeIn)
+                    {
+                        numberTextIndex -= 1;
+                        numberText.text = numberTextIndex.ToString();
+                    }
+
+                    numberFadeIn = !numberFadeIn;
+                }
+                
+            }
+            if(fading)
+            {
+                float _textVisibility = (numberFadeIn) ? (_timeElapsed / .5f) : 1 - (_timeElapsed / .5f);
+                numberText.color = new Color(_textVisibility, _textVisibility, _textVisibility);
             }
 
-            float _textVisibility = (numberFadeIn) ? (_timeElapsed / .5f) : 1 - (_timeElapsed / .5f);
-            numberText.color = new Color(_textVisibility, _textVisibility, _textVisibility);
+            
         }
      
 
