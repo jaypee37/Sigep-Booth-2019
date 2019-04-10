@@ -22,12 +22,16 @@ public class CameraFollow : MonoBehaviour
     bool lerpingBitttch = false;
     Vector3 goal2;
     public bool donelerpingIn = false;
+    float cameraTimerElapsed;
+    float camerafadeTime = 4.0f;
+    public bool fadeMaterialsInView = false;
+    bool lerping = false;
+    bool lerpCalled;
+    public MaterialFaderManager _MaterialFadeManager;
 
     // Use this for initialization
     void Start()
     {
-
-        //player = GameObject.FindGameObjectWithTag("Player");
         prevLoc = new GameObject();
         lerpLoc = locations[0];
     }
@@ -41,9 +45,9 @@ public class CameraFollow : MonoBehaviour
 
     {
         yield return new WaitWhile(() => goal.magnitude > 0.2f);
-        print("done lerping");
         n.FadeStaff(1,notes);
         donelerpingIn = true;
+        cameraTimerElapsed = 0;
     }
 
     IEnumerator WaitForLerp()
@@ -52,68 +56,93 @@ public class CameraFollow : MonoBehaviour
         n.FadeStaff(2,null);
         lerpBackward = true;
         yield return new  WaitWhile(() => goal2.magnitude > 0.2f);
+        _MaterialFadeManager.FadeInMaterials();
         doneLerping = true;
-        locIndex++;
-        print(locIndex);
-        if (locIndex < 4)
-        {
-            lerpLoc = locations[locIndex];
-        }
         
-        lerpBackward = false;
-        lerpForward = false;
     }
 
 
     public void UpdateCam(bool flag)
     {
-        goal = transform.position - lerpLoc.position;
-        goal2 = prevLoc.transform.position - transform.position;
+        //goal = transform.position - lerpLoc.position;
+        //goal2 = prevLoc.transform.position - transform.position;
         if (!flag)
         {
-
             transform.position = dummyCam.transform.position;
             transform.rotation = dummyCam.transform.rotation;
         }
 
     }
 
-    public void lerp(bool dir, string[] notes)
+    public void Update()
     {
-
-        if (dir)
+        if(lerping)
         {
-            if (!lerpForward)
+            if(lerpForward)
             {
-                doneLerping = false;
-                print("lerp in");
-                StartCoroutine(WaitForFade(notes));
-                prevLoc.transform.position = transform.position;
-                prevLoc.transform.rotation = transform.rotation;
-                lerpForward = true;
+                cameraTimerElapsed += Time.deltaTime;
+                if (cameraTimerElapsed > camerafadeTime)
+                {
+                    print("done lerping in");
+                    lerping = false;
+                    cameraTimerElapsed = 0;
+                    n.FadeStaff(1,null);
+                    donelerpingIn = true;
+                }
+                float percentage = (cameraTimerElapsed / camerafadeTime);
+               
+
+                if (percentage > .06 && percentage < .1 && !fadeMaterialsInView)
+                {
+                    _MaterialFadeManager.FadeOutMaterials();
+                }
+
+                transform.position = Vector3.Lerp(transform.position, lerpLoc.position, percentage);
+                transform.rotation = Quaternion.Lerp(transform.rotation, lerpLoc.rotation, percentage);
+
             }
 
-            transform.position = Vector3.Lerp(transform.position, lerpLoc.position, 0.05f);
-            transform.rotation = Quaternion.Lerp(transform.rotation, lerpLoc.rotation, 0.05f);
-            //print((transform.position - lerpLoc.position).magnitude < 0.2f);
-
-        }
-
-
-        else if (!dir)
-        {
-            if (!lerpBackward)
+            else
             {
-                
-                StartCoroutine(WaitForLerp());
+                cameraTimerElapsed += Time.deltaTime;
+                if (cameraTimerElapsed > camerafadeTime)
+                {
+                    doneLerping = true;
+                    lerping = false;
+                    _MaterialFadeManager.FadeInMaterials();
+                    cameraTimerElapsed = 0;
+                    locIndex++;
+                    print(locIndex);
+                    if (locIndex < 4)
+                    {
+                        lerpLoc = locations[locIndex];
+                    }
+
+                    lerpBackward = false;
+                    lerpForward = false;
+                }
+                float percentage = (cameraTimerElapsed / camerafadeTime);
+
+                transform.position = Vector3.Lerp(transform.position, prevLoc.transform.position, 0.05f);
+                transform.rotation = Quaternion.Lerp(transform.rotation, prevLoc.transform.rotation, 0.05f);
 
             }
-            transform.position = Vector3.Lerp(transform.position, prevLoc.transform.position, 0.05f);
-            transform.rotation = Quaternion.Lerp(transform.rotation, prevLoc.transform.rotation, 0.05f);
-
         }
+    }
 
-
+    public void lerpIn(bool dir, string[] notes)
+    {
+        prevLoc.transform.position = transform.position;
+        lerping = true;
+        lerpForward = dir;
+            
+    }
+    public void lerpOut()
+    {
+        n.FadeStaff(2, null);
+        lerping = true;
+        lerpForward = false;
+        
     }
 }
 
