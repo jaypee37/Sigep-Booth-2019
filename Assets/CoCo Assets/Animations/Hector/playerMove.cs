@@ -170,8 +170,6 @@ public class playerMove : MonoBehaviour
     {
         isAttacking = true;
         animator.SetTrigger("Attack");
-       
-
     }
     public void resetRotation(int i)
     {

@@ -47,9 +47,9 @@ public class Game_Manager : MonoBehaviour
     bool timer_Started = false;
     public TextMeshProUGUI numberText;
 
+    public GameObject activateBossFight; //DIFFERENT
+
     
-
-
     enum phases
     {
         Phase1,
@@ -150,6 +150,7 @@ public class Game_Manager : MonoBehaviour
                     {
                         HandleAttackMode();
                     }
+                    //Debug.Log("Nice!");
                     break;
                 case phases.Phase2:
                     curEnemySetSize = 2;
@@ -215,9 +216,8 @@ public class Game_Manager : MonoBehaviour
                         HandleAttackMode();
                     }
                     break;
-                default:                    
-                    SceneHandler.instance.SetFadedAndCanvas(true,winScreen);
-                    SceneHandler.instance.ChangeScene(SceneHandler.Scene.Win);
+                default:
+                    activateBossFight.GetComponent<ActivateBoss>().Activate();
                     break;
             }
         }
@@ -489,7 +489,6 @@ public class Game_Manager : MonoBehaviour
                 CreateButtonSequence();
                 sequenceReady = true;
                 timer_Started = false;
-                curEnemy.finishedAttacking = true;
             }
             
             if (staff.fadeInFinished)

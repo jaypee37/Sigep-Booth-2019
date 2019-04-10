@@ -35,7 +35,6 @@ public class NoteStaff : MonoBehaviour
         curColor.a = 0;
         this.image.color = curColor;
         
-        //
         timerImage = timer.GetComponent<Image>();
         Color timerColor = timerImage.color;
         timerColor.a = 0;
