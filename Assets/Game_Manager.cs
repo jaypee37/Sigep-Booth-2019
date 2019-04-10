@@ -44,6 +44,8 @@ public class Game_Manager : MonoBehaviour
     public Canvas winScreen;
     public Canvas instructionScreen;
     bool instructionShown = false;
+    bool timer_Started = false;
+    public TextMeshProUGUI numberText;
 
     
 
@@ -75,10 +77,22 @@ public class Game_Manager : MonoBehaviour
     }
     IEnumerator WaitForSequence()
     {
-        yield return new WaitForSeconds(5);
+        staff.FadeTimerNumbersInandOut();
+        timer_Started = true;
+        yield return new WaitForSeconds(1);
+        print("1");
+        yield return new WaitForSeconds(1);
+        print("2");
+        yield return new WaitForSeconds(1);
+        print("3");
+        yield return new WaitForSeconds(1);
+        print("4");
+        yield return new WaitForSeconds(1);
+        print("5");
+        timer_Started = false;
         timeRanOut = true;
         waitingForSequence = false;
-        StopAllCoroutines();
+        //StopAllCoroutines();
 
     }
     IEnumerator WaitForAwake()
@@ -97,7 +111,7 @@ public class Game_Manager : MonoBehaviour
     {
         instructionShown = true;
         yield return new WaitWhile(() => player.isAttacking);
-        curEnemy.takeDamage();
+        //curEnemy.takeDamage();
 
     }
 
@@ -376,7 +390,7 @@ public class Game_Manager : MonoBehaviour
         }
         //Display Buttons Functions
 
-        StartCoroutine(WaitForSequence());
+        
     }
 
     public void HandleSequencePhase()
@@ -430,13 +444,13 @@ public class Game_Manager : MonoBehaviour
             if (sequenceFinished)
             {
                 StopAllCoroutines();
-                print("completed Sequence");
-                CreateButtonSequence();
+                print("completed Sequence");                
                 sequenceFinished = false;
                 sequenceIndex = 0;
                 StopAllCoroutines();
                 staff.FadeOutNotes();
                 player.Attack();
+                
                 StartCoroutine(WaitForEnemyDeath());
             }
         }
@@ -447,10 +461,10 @@ public class Game_Manager : MonoBehaviour
             sequenceIndex = 0;
             print("you lost bitch");
             timeRanOut = false;
-            //CreateButtonSequence();
             curEnemy.Attack();
             sequenceReady = false;
-            staff.notesFade = false;
+            staff.notesFade = false;            
+            StopCoroutine(WaitForSequence());
            
         }
         
@@ -474,6 +488,8 @@ public class Game_Manager : MonoBehaviour
                 print("button sequecne");
                 CreateButtonSequence();
                 sequenceReady = true;
+                timer_Started = false;
+                curEnemy.finishedAttacking = true;
             }
             
             if (staff.fadeInFinished)
@@ -490,6 +506,14 @@ public class Game_Manager : MonoBehaviour
                 if (staff.notesFade && sequenceReady)
                 {
                     HandleSequencePhase();
+                    if (!timer_Started && curEnemy.finishedAttacking)
+                    {
+                        print("in here");
+                        StartCoroutine(WaitForSequence());
+                    }
+                   
+                    
+                    
                 }
 
                 
@@ -499,7 +523,7 @@ public class Game_Manager : MonoBehaviour
 
 
 
-            if (curEnemy.dead)
+            if (curEnemy.dead && timer_Started)
             {
                
                 curEnemySetDeadCount++;
@@ -515,9 +539,10 @@ public class Game_Manager : MonoBehaviour
                 }
                 if (!enemiesDead)
                 {
-                    CreateButtonSequence();
+                    
                     staff.notesFade = false;
                     staff.FadeNotes(1, sequence);
+                    sequenceReady = false;
                 }
                 
                 
@@ -560,6 +585,7 @@ public class Game_Manager : MonoBehaviour
         enemiesDead = false;
         sequenceReady = false;
         staff.fadeInFinished = false;
+        timer_Started = false;
     }
     public void resetForNextPhase()
     {

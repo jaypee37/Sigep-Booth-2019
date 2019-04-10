@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class NoteStaff : MonoBehaviour
 {
@@ -18,6 +19,13 @@ public class NoteStaff : MonoBehaviour
     public Sprite[] NoteImages;
     public bool setNotes = false;
     public bool notesFade = false;
+    public Canvas timer;
+    Image timerImage;
+    TextMeshProUGUI numberText;
+    bool numberFadeIn = false;
+    bool numberFadeOut = false;
+    float _timeElapsed;
+    bool fading = false;
     
     void Start()
     {
@@ -25,6 +33,19 @@ public class NoteStaff : MonoBehaviour
         Color curColor = this.image.color;
         curColor.a = 0;
         this.image.color = curColor;
+        
+        //
+        timerImage = timer.GetComponent<Image>();
+        Color timerColor = timerImage.color;
+        timerColor.a = 0;
+        timerImage.color = timerColor;
+
+        numberText = timer.GetComponentInChildren<TextMeshProUGUI>();
+        numberText.text = "5";
+        Color numColor = numberText.color;
+        numColor.a = 0;
+        numberText.color = numColor;
+
         FadeOutNotes();
         fadeInFinished = false;
     }
@@ -45,7 +66,7 @@ public class NoteStaff : MonoBehaviour
        
     }
 
-    IEnumerator WaitForFade(int i, string[] notes)
+    IEnumerator WaitForStaffFade(int i, string[] notes)
     {
         
         if(i == 1)
@@ -60,12 +81,42 @@ public class NoteStaff : MonoBehaviour
         }
        
         yield return new WaitUntil(() => image.color.a > .95f);
+        
         fadeOut = false;
         fadeIn = false;
         fadeInFinished = true;
 
         print("done fading");
 
+    }
+
+    IEnumerator WaitForFadeTimerNumbers()
+    {
+        numberFadeIn = true;
+        fading = true;
+        
+        yield return new WaitForSeconds(1f);
+        numberText.text = "4";
+        yield return new WaitForSeconds(1f);
+        numberText.text = "3";
+        yield return new WaitForSeconds(1f);
+        numberText.text = "2";
+        yield return new WaitForSeconds(1f);
+        numberText.text = "1";
+        yield return new WaitForSeconds(1f);
+        numberText.text = "0";
+        yield return new WaitForSeconds(1f);
+        fading = false;
+        numberFadeIn = true;
+        Color numColor = numberText.color;
+        numColor.a = 0;
+        numberText.color = numColor;
+        numberText.text = "5";
+
+        /*numberFadeIn = false;
+        numberFadeOut = true;
+        yield return new WaitForSeconds(.5f);
+        numberFadeOut = false;*/
 
     }
 
@@ -76,20 +127,27 @@ public class NoteStaff : MonoBehaviour
         if (fadeIn)
         {
             Color curColor = this.image.color;
-
             curColor.a = Mathf.Lerp(curColor.a,1, 0.05f);
             this.image.color = curColor;
-           
+
+            Color timerColor = timerImage.color;
+            timerColor.a = Mathf.Lerp(timerColor.a, 1, 0.05f); ;
+            timerImage.color = timerColor;
+
+
 
         }
        
         else if (fadeOut)
         {
 
-            Color curColor = this.image.color;
-           
+            Color curColor = this.image.color;           
             curColor.a = 0;
             this.image.color = curColor;
+
+            /*Color timerColor = timerImage.color;
+            timerColor.a = 0;
+            timerImage.color = timerColor;*/
             FadeOutNotes();
         }
         if(setNotes)
@@ -97,12 +155,29 @@ public class NoteStaff : MonoBehaviour
             FadeInNotes();
           
         }
+        if(fading)
+        {
+            _timeElapsed += Time.deltaTime;
+            if (_timeElapsed >= .5f)
+            {
+                _timeElapsed = 0f;
+                numberFadeIn = !numberFadeIn;
+            }
 
+            float _textVisibility = (numberFadeIn) ? (_timeElapsed / .5f) : 1 - (_timeElapsed / .5f);
+            numberText.color = new Color(_textVisibility, _textVisibility, _textVisibility);
+        }
+     
+
+    }
+    public void FadeTimerNumbersInandOut()
+    {
+        StartCoroutine(WaitForFadeTimerNumbers());
     }
     public void Fade(int i,string[] notes)
     {
         fadeInFinished = false;
-        StartCoroutine(WaitForFade(i,notes));
+        StartCoroutine(WaitForStaffFade(i,notes));
     }
     public void FadeNotes(int i,string[] notes)
     {
