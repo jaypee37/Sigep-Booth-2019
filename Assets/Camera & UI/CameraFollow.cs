@@ -23,11 +23,12 @@ public class CameraFollow : MonoBehaviour
     Vector3 goal2;
     public bool donelerpingIn = false;
     float cameraTimerElapsed;
-    float camerafadeTime = 4.0f;
+    float camerafadeTime = 2.0f;
     public bool fadeMaterialsInView = false;
     bool lerping = false;
     bool lerpCalled;
     public MaterialFaderManager _MaterialFadeManager;
+    float lerpSpeed = 2.5f;
 
     // Use this for initialization
     void Start()
@@ -41,7 +42,7 @@ public class CameraFollow : MonoBehaviour
     {
 
     }
-    IEnumerator WaitForFade(string[] notes)
+   /* IEnumerator WaitForFade(string[] notes)
 
     {
         yield return new WaitWhile(() => goal.magnitude > 0.2f);
@@ -59,7 +60,7 @@ public class CameraFollow : MonoBehaviour
         _MaterialFadeManager.FadeInMaterials();
         doneLerping = true;
         
-    }
+    }*/
 
 
     public void UpdateCam(bool flag)
@@ -81,6 +82,7 @@ public class CameraFollow : MonoBehaviour
             if(lerpForward)
             {
                 cameraTimerElapsed += Time.deltaTime;
+
                 if (cameraTimerElapsed > camerafadeTime)
                 {
                     print("done lerping in");
@@ -97,8 +99,8 @@ public class CameraFollow : MonoBehaviour
                     _MaterialFadeManager.FadeOutMaterials();
                 }
 
-                transform.position = Vector3.Lerp(transform.position, lerpLoc.position, percentage);
-                transform.rotation = Quaternion.Lerp(transform.rotation, lerpLoc.rotation, percentage);
+                transform.position = Vector3.Lerp(transform.position, lerpLoc.position, lerpSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.Lerp(transform.rotation, lerpLoc.rotation, lerpSpeed  * Time.deltaTime);
 
             }
 
@@ -107,6 +109,7 @@ public class CameraFollow : MonoBehaviour
                 cameraTimerElapsed += Time.deltaTime;
                 if (cameraTimerElapsed > camerafadeTime)
                 {
+                    print("finished fade back");
                     doneLerping = true;
                     lerping = false;
                     _MaterialFadeManager.FadeInMaterials();
@@ -123,8 +126,8 @@ public class CameraFollow : MonoBehaviour
                 }
                 float percentage = (cameraTimerElapsed / camerafadeTime);
 
-                transform.position = Vector3.Lerp(transform.position, prevLoc.transform.position, 0.05f);
-                transform.rotation = Quaternion.Lerp(transform.rotation, prevLoc.transform.rotation, 0.05f);
+                transform.position = Vector3.Lerp(transform.position, prevLoc.transform.position, lerpSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.Lerp(transform.rotation, prevLoc.transform.rotation, lerpSpeed * Time.deltaTime);
 
             }
         }
