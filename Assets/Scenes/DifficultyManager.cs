@@ -10,7 +10,7 @@ public class DifficultyManager : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        
         _audioSource = GetComponent<AudioSource>();
         Input.ResetInputAxes();
     }
