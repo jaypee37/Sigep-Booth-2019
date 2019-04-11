@@ -15,7 +15,7 @@ public class LoseScene : MonoBehaviour
     IEnumerator WaitForSceneSwitch()
     {
         yield return new WaitForSeconds(6);
-        SceneHandler.instance.SetFadedAndCanvas(false,StartScreen);
+        //SceneHandler.instance.SetFadedAndCanvas(false,StartScreen);
         SceneHandler.instance.ChangeScene(SceneHandler.Scene.Start);
     }
 

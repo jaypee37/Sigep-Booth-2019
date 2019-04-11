@@ -7,16 +7,20 @@ public class DifficultyManager : MonoBehaviour
     static public int difficulty;
     bool _playButton = false;
     AudioSource _audioSource;
+    public AudioSource Poco;
     // Start is called before the first frame update
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        
         _audioSource = GetComponent<AudioSource>();
         Input.ResetInputAxes();
     }
     void Start()
     {
-       
+       if(!SceneHandler.instance._audioSource.isPlaying)
+        {
+            Poco.Play();
+        }
     }
 
     // Update is called once per frame
@@ -54,7 +58,7 @@ public class DifficultyManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         
         SceneHandler.instance.ChangeScene(SceneHandler.Scene.Opening);
-        Destroy(SceneHandler.instance._audioSource.gameObject);
+        SceneHandler.instance._audioSource.Stop(); ;
     }
    
 

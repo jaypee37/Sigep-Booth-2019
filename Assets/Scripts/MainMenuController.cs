@@ -28,7 +28,19 @@ public class MainMenuController : MonoBehaviour
     #endregion
 
     #region Unity events
+    private void OnEnable()
+    {
+        _fadingIn = false;
+        _gameStarted = false;
+        _textVisibility = 1.0f;
+        _playButton = false;
 
+        _audioSource = GetComponent<AudioSource>();
+
+        StartCoroutine("FadeText");
+        Input.ResetInputAxes();
+        _audioSource.Play();
+    }
     private void Awake() {
         _fadingIn = false;
         _gameStarted = false;
@@ -42,7 +54,7 @@ public class MainMenuController : MonoBehaviour
     }
 
     private void Update() {
-        if (Input.GetAxis("Strum Down") != -1 && !_playButton)
+        if ((Input.GetAxis("Strum Down") != -1 || Input.GetButtonDown("Green") || Input.GetButtonDown("Red") || Input.GetButtonDown("Blue") || Input.GetButtonDown("Yellow")) && !_playButton)
         {
             print("here in menu");
             _playButton = true;
@@ -80,7 +92,7 @@ public class MainMenuController : MonoBehaviour
 
     IEnumerator StartGame() {
         _gameStarted = true;
-        _audioSource.Play();
+        //_audioSource.Play();
         yield return new WaitForSeconds(_audioSource.clip.length);
 
         
