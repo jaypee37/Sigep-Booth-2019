@@ -52,7 +52,8 @@ public class Game_Manager : MonoBehaviour
     bool lerpCalled;
     public ActivateBoss activateBoss;
     int maxSequenceNumber;
-
+    int playerHealth = 3;
+    bool gameEnded = false; 
     
 
 
@@ -98,7 +99,7 @@ public class Game_Manager : MonoBehaviour
     }
     IEnumerator WaitForAwake()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1.5f);
         running = true;
 
     }
@@ -164,6 +165,12 @@ public class Game_Manager : MonoBehaviour
     {
         if(running)
         {
+
+            if(playerHealth <= 0 && !gameEnded && curEnemy.finishedAttacking)
+            {
+                gameEnded = true;
+                SceneHandler.instance.ChangeScene(SceneHandler.Scene.Loss);
+            }
             switch (currentPhase)
             {
                 case phases.Phase1:
@@ -253,7 +260,9 @@ public class Game_Manager : MonoBehaviour
                     }
                     break;
                 default:
-                    activateBoss.Activate();                    
+                    staff.StopTimer();
+                    activateBoss.Activate();
+                    running = false;
                     break;
             }
         }
@@ -422,11 +431,11 @@ public class Game_Manager : MonoBehaviour
     {
         
         sequence = new string[maxSequenceNumber];
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < maxSequenceNumber; i++)
         {
             sequence[i] = buttons[(int)Random.Range(0, 4)];
         }
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < maxSequenceNumber; i++)
         {
             print(sequence[i]);
         }
@@ -470,7 +479,7 @@ public class Game_Manager : MonoBehaviour
                 }
                 
 
-                if (curColor == sequence[sequenceIndex] || Input.GetButtonDown("Submit") )
+                if (curColor == sequence[sequenceIndex] )
                 {
                     staff.GrayOutNote(sequenceIndex);
                     sequenceIndex++;
@@ -520,6 +529,7 @@ public class Game_Manager : MonoBehaviour
             timeRanOut = false;
             curEnemy.Attack();
 
+            playerHealth -= 1;
             staff.notesFade = false;            
             StopCoroutine(WaitForSequence());
             StartCoroutine(WaitForEnemyAttack());

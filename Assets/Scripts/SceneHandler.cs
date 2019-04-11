@@ -14,7 +14,9 @@ public class SceneHandler : MonoBehaviour
         Opening,
         Game,
         Win,
-        Loss
+        Loss,
+        WinPicture
+        
         
     }
 
@@ -96,6 +98,9 @@ public class SceneHandler : MonoBehaviour
                 break;
             case Scene.Loss:
                 SceneManager.LoadScene("Lose", LoadSceneMode.Single);
+                break;
+            case Scene.WinPicture:
+                SceneManager.LoadScene("WinPicture", LoadSceneMode.Single);
                 break;
         }
 

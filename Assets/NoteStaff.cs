@@ -30,9 +30,25 @@ public class NoteStaff : MonoBehaviour
     float staffFadeTime = 1.2f;
     float staffFadeTimeElapsed;
     int MaxNumberIndex;
+    int noteCount;
     
-    void SetNoteTransforms()
+    void SetNoteTransforms(SceneHandler.Difficulty difficulty)
     {
+        switch (difficulty)
+        {
+            case SceneHandler.Difficulty.Easy:
+                Notes = transform.GetChild(0).GetComponentsInChildren<Image>();
+                noteCount = 2;
+                break;
+            case SceneHandler.Difficulty.Medium:
+                Notes = transform.GetChild(1).GetComponentsInChildren<Image>();
+                noteCount = 4;
+                break;
+            case SceneHandler.Difficulty.Hard:
+                Notes = transform.GetChild(2).GetComponentsInChildren<Image>();
+                noteCount = 6;
+                break;
+        }
 
     }
     void SetNumberText(SceneHandler.Difficulty difficulty)
@@ -53,6 +69,7 @@ public class NoteStaff : MonoBehaviour
     void Start()
     {
         SetNumberText(SceneHandler.instance.difficulty);
+        SetNoteTransforms(SceneHandler.instance.difficulty);
         image = GetComponent<Image>();
         Color curColor = this.image.color;
         curColor.a = 0;
@@ -236,7 +253,7 @@ public class NoteStaff : MonoBehaviour
     {
         if(notes != null)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < noteCount; i++)
             {
                 Notes[i].sprite = ChooseColor(notes[i]);
                 Notes[i].color = Color.white;
@@ -268,7 +285,7 @@ public class NoteStaff : MonoBehaviour
 
     public void FadeOutNotes()
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < noteCount; i++)
         {
             Image note = Notes[i];
             Color whiteOut = note.color;
@@ -278,7 +295,7 @@ public class NoteStaff : MonoBehaviour
     }
     void FadeInNotes()
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < noteCount; i++)
         {
             Image note = Notes[i];
             Color curColor = note.color;

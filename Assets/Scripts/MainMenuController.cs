@@ -41,7 +41,7 @@ public class MainMenuController : MonoBehaviour
     }
 
     private void Update() {
-        if (Input.GetButtonDown("Submit") && !_playButton)
+        if (Input.GetAxis("Strum Down") != -1 && !_playButton)
         {
             _playButton = true;
             StartCoroutine("StartGame");
@@ -81,7 +81,7 @@ public class MainMenuController : MonoBehaviour
         _audioSource.Play();
         yield return new WaitForSeconds(_audioSource.clip.length);
 
-        Destroy(_audioSource.gameObject);
+        
         SceneHandler.instance.ChangeScene(SceneHandler.Scene.Difficulty);
     }
 
