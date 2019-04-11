@@ -42,25 +42,7 @@ public class CameraFollow : MonoBehaviour
     {
 
     }
-   /* IEnumerator WaitForFade(string[] notes)
-
-    {
-        yield return new WaitWhile(() => goal.magnitude > 0.2f);
-        n.FadeStaff(1,notes);
-        donelerpingIn = true;
-        cameraTimerElapsed = 0;
-    }
-
-    IEnumerator WaitForLerp()
-
-    {
-        n.FadeStaff(2,null);
-        lerpBackward = true;
-        yield return new  WaitWhile(() => goal2.magnitude > 0.2f);
-        _MaterialFadeManager.FadeInMaterials();
-        doneLerping = true;
-        
-    }*/
+  
 
 
     public void UpdateCam(bool flag)

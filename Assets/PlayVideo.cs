@@ -8,14 +8,13 @@ public class PlayVideo : MonoBehaviour
 {
     public RawImage rawImage;
     public VideoPlayer videoPlayer;
-    public AudioSource _audioSource;
     bool _vidStarted;
     bool gameStarted = false;
     bool vidEnd = false;
     // Start is called before the first frame update
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        
     }
     void Start()
     {
@@ -25,11 +24,6 @@ public class PlayVideo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(vidEnd && !gameStarted)
-        {
-            gameStarted = true;
-            StartCoroutine(StartGameScene());
-        }
     }
     IEnumerator PlayVid()
     {
@@ -44,8 +38,9 @@ public class PlayVideo : MonoBehaviour
         rawImage.texture = videoPlayer.texture;
         videoPlayer.Play();
         _vidStarted = true;
-        yield return new WaitWhile(() => videoPlayer.isPlaying);
+        yield return new WaitForSeconds(5);
         vidEnd = true;
+        StartCoroutine(StartGameScene());
         
 
     }

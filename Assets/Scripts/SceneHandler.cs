@@ -14,7 +14,9 @@ public class SceneHandler : MonoBehaviour
         Opening,
         Game,
         Win,
-        Loss
+        Loss,
+        WinPicture
+        
         
     }
 
@@ -51,6 +53,7 @@ public class SceneHandler : MonoBehaviour
     #endregion
 
     public Difficulty difficulty;
+    public AudioSource _audioSource;
 
     #region Unity events
 
@@ -96,6 +99,9 @@ public class SceneHandler : MonoBehaviour
                 break;
             case Scene.Loss:
                 SceneManager.LoadScene("Lose", LoadSceneMode.Single);
+                break;
+            case Scene.WinPicture:
+                SceneManager.LoadScene("WinPicture", LoadSceneMode.Single);
                 break;
         }
 

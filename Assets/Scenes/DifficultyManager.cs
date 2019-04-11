@@ -12,28 +12,50 @@ public class DifficultyManager : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         _audioSource = GetComponent<AudioSource>();
+        Input.ResetInputAxes();
     }
     void Start()
     {
-        
+       
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Submit") && !_playButton)
+        if (!_playButton)
         {
-            SceneHandler.instance.difficulty = SceneHandler.Difficulty.Medium;
-            _playButton = true;
-            StartCoroutine(StartOpeningScene());
+            
+
+            if (Input.GetButtonDown("Green"))
+            {
+                _playButton = true;
+                SceneHandler.instance.difficulty = SceneHandler.Difficulty.Easy;
+                StartCoroutine(StartOpeningScene());
+            }
+            else if (Input.GetButtonDown("Red"))
+            {
+                _playButton = true;
+                SceneHandler.instance.difficulty = SceneHandler.Difficulty.Medium;
+                StartCoroutine(StartOpeningScene());
+            }
+            else if (Input.GetButtonDown("Yellow"))
+            {
+                _playButton = true;
+                SceneHandler.instance.difficulty = SceneHandler.Difficulty.Hard;
+                StartCoroutine(StartOpeningScene());
+            }
+ 
             
         }
     }
     IEnumerator StartOpeningScene()
     {
         _audioSource.Play();
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(0.5f);
+        
         SceneHandler.instance.ChangeScene(SceneHandler.Scene.Opening);
+        Destroy(SceneHandler.instance._audioSource.gameObject);
     }
+   
 
 }

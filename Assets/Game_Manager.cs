@@ -52,7 +52,10 @@ public class Game_Manager : MonoBehaviour
     bool lerpCalled;
     public ActivateBoss activateBoss;
     int maxSequenceNumber;
-
+    int playerHealth = 3;
+    bool gameEnded = false;
+    public GuitarSoundManager guitarManager;
+    public Canvas loseScreen;
     
 
 
@@ -98,7 +101,7 @@ public class Game_Manager : MonoBehaviour
     }
     IEnumerator WaitForAwake()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1.5f);
         running = true;
 
     }
@@ -164,6 +167,13 @@ public class Game_Manager : MonoBehaviour
     {
         if(running)
         {
+
+            if(playerHealth <= 0 && !gameEnded && curEnemy.finishedAttacking)
+            {
+                gameEnded = true;
+                SceneHandler.instance.SetFadedAndCanvas(false, loseScreen);
+                SceneHandler.instance.ChangeScene(SceneHandler.Scene.Loss);
+            }
             switch (currentPhase)
             {
                 case phases.Phase1:
@@ -211,7 +221,7 @@ public class Game_Manager : MonoBehaviour
                     }
                     break;
                 case phases.Phase3:
-                    curEnemySetSize = 3;
+                    curEnemySetSize = 2;
                     if (!playerPhaseDone && !enemyMovingPhase)
                     {
                         HandlePlayerPhase();
@@ -253,7 +263,11 @@ public class Game_Manager : MonoBehaviour
                     }
                     break;
                 default:
-                    activateBoss.Activate();                    
+                    staff.StopTimer();
+                    guitarManager.playDeLaVoice();
+                    activateBoss.Activate();
+                    
+                    running = false;
                     break;
             }
         }
@@ -333,8 +347,8 @@ public class Game_Manager : MonoBehaviour
                         break;
                     case phases.Phase3:
                         enemySet = GameObject.FindGameObjectWithTag("EnemySet3");
-                        curEnemySet = new enemyMove[3];
-                        for (int i = 0; i < 3; i++)
+                        curEnemySet = new enemyMove[2];
+                        for (int i = 0; i < 2; i++)
                         {
                             curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
                             Vector3 turn = new Vector3();
@@ -422,11 +436,11 @@ public class Game_Manager : MonoBehaviour
     {
         
         sequence = new string[maxSequenceNumber];
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < maxSequenceNumber; i++)
         {
             sequence[i] = buttons[(int)Random.Range(0, 4)];
         }
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < maxSequenceNumber; i++)
         {
             print(sequence[i]);
         }
@@ -470,8 +484,9 @@ public class Game_Manager : MonoBehaviour
                 }
                 
 
-                if (curColor == sequence[sequenceIndex] || Input.GetButtonDown("Submit") )
+                if (curColor == sequence[sequenceIndex] )
                 {
+                    guitarManager.PlayStrum(curColor);
                     staff.GrayOutNote(sequenceIndex);
                     sequenceIndex++;
                     if (sequenceIndex == maxSequenceNumber)
@@ -520,6 +535,7 @@ public class Game_Manager : MonoBehaviour
             timeRanOut = false;
             curEnemy.Attack();
 
+            playerHealth -= 1;
             staff.notesFade = false;            
             StopCoroutine(WaitForSequence());
             StartCoroutine(WaitForEnemyAttack());

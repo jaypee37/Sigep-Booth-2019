@@ -26,6 +26,7 @@ public class BossDeLaCruzMvt : MonoBehaviour
         curLoc = locations[locIndex];
         animator = GetComponent<Animator>();
         originalMat = this.gameObject.transform.GetChild(1).GetComponent<SkinnedMeshRenderer>().material;
+        
     }
 
    
@@ -63,7 +64,7 @@ public class BossDeLaCruzMvt : MonoBehaviour
                 stunned = false;
                 //this.gameObject.transform.GetChild(1).GetComponent<SkinnedMeshRenderer>().material.SetColor("_Color", originalColor);
                 this.gameObject.transform.GetChild(1).GetComponent<SkinnedMeshRenderer>().material = originalMat;
-                agent.speed = 2;
+                agent.speed = 1;
                 animator.SetBool("Run", true);
             }
         }
@@ -85,7 +86,7 @@ public class BossDeLaCruzMvt : MonoBehaviour
             StartCoroutine(WaitForMove());
             animator.SetBool("Run", true);
             agent.destination = curLoc.position;
-            agent.speed = 2;
+            agent.speed = 1;
             moving = true;
         }
         return true;

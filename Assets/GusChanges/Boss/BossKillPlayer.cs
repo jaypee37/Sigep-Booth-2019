@@ -5,13 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class BossKillPlayer : MonoBehaviour
 {
+    bool gameEnded = false;
+    public Canvas loseScreen;
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.tag == "Player" && !gameEnded)
         {
+            gameEnded = false;
             Debug.Log("GAME OVER MAN!");
-            //SceneHandler.instance.SetFadedAndCanvas(true, loseScreen);
-            //SceneHandler.instance.ChangeScene(SceneHandler.Scene.Lose);
+            SceneHandler.instance.SetFadedAndCanvas(false, loseScreen);
+            SceneHandler.instance.ChangeScene(SceneHandler.Scene.Loss);
         }
     }
 }

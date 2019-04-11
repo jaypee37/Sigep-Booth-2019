@@ -47,6 +47,10 @@ public class GameBossManager : MonoBehaviour
     public TestFader TestFader;
     bool finishedCurrentAttack = true;
     bool startStaffFaded = false;
+    bool gameEnded = false;
+    int maxSequenceNumber;
+    public GuitarSoundManager guitarManager;
+    public Canvas loseScreen;
 
 
     //Phases are now what form of attack he is in
@@ -63,13 +67,30 @@ public class GameBossManager : MonoBehaviour
     bool playerPhaseDone = false;
     bool bossMovingPhase = false;
 
+    void SetDifficulty(SceneHandler.Difficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case SceneHandler.Difficulty.Easy:
+                maxSequenceNumber = 2;
+                break;
+            case SceneHandler.Difficulty.Medium:
+                maxSequenceNumber = 4;
+                break;
+            case SceneHandler.Difficulty.Hard:
+                maxSequenceNumber = 6;
+                break;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        SetDifficulty(SceneHandler.instance.difficulty);
         currentPhase = phases.Phase1;
         Input.ResetInputAxes();
         running = true;
+        
        
 
     }
@@ -113,9 +134,11 @@ public class GameBossManager : MonoBehaviour
 
         if (running)
         {
-            if(!startStaffFaded)
+            
+            if (!startStaffFaded)
             {
                 staff.FadeStaff(1, null);
+                staff.StopTimer();
                 startStaffFaded = true;
                 sequenceFinished = false;
             }
@@ -137,9 +160,14 @@ public class GameBossManager : MonoBehaviour
                 case phases.Phase3:
                     HandleAttackMode();
                     break;
-                default:                    
-                    SceneHandler.instance.SetFadedAndCanvas(true, winScreen);
-                    SceneHandler.instance.ChangeScene(SceneHandler.Scene.Win);
+                default:      
+                    if(!gameEnded)
+                    {
+                        gameEnded = true;
+                        SceneHandler.instance.SetFadedAndCanvas(false, winScreen);
+                        SceneHandler.instance.ChangeScene(SceneHandler.Scene.Win);
+                    }
+                   
                     break;
             }
         }
@@ -159,12 +187,12 @@ public class GameBossManager : MonoBehaviour
     public void CreateButtonSequence()
     {
 
-        sequence = new string[4];
-        for (int i = 0; i < 4; i++)
+        sequence = new string[maxSequenceNumber];
+        for (int i = 0; i < maxSequenceNumber; i++)
         {
             sequence[i] = buttons[(int)Random.Range(0, 4)];
         }
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < maxSequenceNumber; i++)
         {
             print(sequence[i]);
         }
@@ -208,9 +236,10 @@ public class GameBossManager : MonoBehaviour
 
                 if (curColor == sequence[sequenceIndex] || Input.GetButtonDown("Submit"))
                 {
+                    guitarManager.PlayStrum(curColor);
                     staff.GrayOutNote(sequenceIndex);
                     sequenceIndex++;
-                    if (sequenceIndex == 4)
+                    if (sequenceIndex == maxSequenceNumber)
                     {
                         sequenceFinished = true;
                     }

@@ -21,7 +21,7 @@ public class MainMenuController : MonoBehaviour
     bool _fadingIn;
     float _textVisibility;
     float _timeElapsed;
-    bool _playButton;
+    public bool _playButton;
 
     AudioSource _audioSource;
 
@@ -38,11 +38,13 @@ public class MainMenuController : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
 
         StartCoroutine("FadeText");
+        Input.ResetInputAxes();
     }
 
     private void Update() {
-        if (Input.GetButtonDown("Submit") && !_playButton)
+        if (Input.GetAxis("Strum Down") != -1 && !_playButton)
         {
+            print("here in menu");
             _playButton = true;
             StartCoroutine("StartGame");
         }
@@ -81,8 +83,10 @@ public class MainMenuController : MonoBehaviour
         _audioSource.Play();
         yield return new WaitForSeconds(_audioSource.clip.length);
 
-        Destroy(_audioSource.gameObject);
+        
         SceneHandler.instance.ChangeScene(SceneHandler.Scene.Difficulty);
+        _playButton = false;
+        _gameStarted = false;
     }
 
     #endregion
