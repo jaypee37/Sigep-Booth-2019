@@ -27,7 +27,7 @@ public class NoteStaff : MonoBehaviour
     float _timeElapsed;
     public bool fading = false;
     int numberTextIndex = 5;
-    float staffFadeTime = 2;
+    float staffFadeTime = 1.2f;
     float staffFadeTimeElapsed;
     
     

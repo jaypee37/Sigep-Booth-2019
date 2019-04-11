@@ -50,6 +50,7 @@ public class Game_Manager : MonoBehaviour
     bool ActiveButtons = false;
     Quaternion prevPlayerRotation;
     bool lerpCalled;
+    public ActivateBoss activateBoss;
 
     
 
@@ -59,7 +60,8 @@ public class Game_Manager : MonoBehaviour
         Phase1,
         Phase2,
         Phase3,
-        Phase4
+        Phase4,
+        Phase5
     }
 
     phases currentPhase;
@@ -70,6 +72,7 @@ public class Game_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        instructionScreen.gameObject.SetActive(false);
         currentPhase = phases.Phase1;
         curEnemySet = new enemyMove[4];
         dontTurnCamera = false;
@@ -81,12 +84,14 @@ public class Game_Manager : MonoBehaviour
     }
     IEnumerator WaitForSequence()
     {
+        
         staff.FadeTimerNumbersInandOut();
         timer_Started = true;
         yield return new WaitWhile(() => staff.fading);       
         timer_Started = false;
         timeRanOut = true;
         waitingForSequence = false;
+      
         //StopAllCoroutines();
 
     }
@@ -124,7 +129,9 @@ public class Game_Manager : MonoBehaviour
     IEnumerator WaitForInstructionScreen()
     {
         instructionShown = true;
-        yield return new WaitWhile(() => player.isAttacking);
+        instructionScreen.gameObject.SetActive(true);
+        yield return new WaitForSeconds(5);
+        Destroy(instructionScreen.gameObject);
         //curEnemy.takeDamage();
 
     }
@@ -229,9 +236,8 @@ public class Game_Manager : MonoBehaviour
                         HandleAttackMode();
                     }
                     break;
-                default:                    
-                    SceneHandler.instance.SetFadedAndCanvas(true,winScreen);
-                    SceneHandler.instance.ChangeScene(SceneHandler.Scene.Win);
+                default:
+                    activateBoss.Activate();                    
                     break;
             }
         }
@@ -335,6 +341,7 @@ public class Game_Manager : MonoBehaviour
                             curEnemySet[i].SetTurnVector(turn, t);
                         }
                         break;
+                        
 
                 }
                 setMovingEnemies = true;
@@ -447,7 +454,7 @@ public class Game_Manager : MonoBehaviour
                 }
                 
 
-                if (curColor == sequence[sequenceIndex] || Input.GetButtonDown("Submit"))
+                if (curColor == sequence[sequenceIndex] || Input.GetButtonDown("Submit") )
                 {
                     staff.GrayOutNote(sequenceIndex);
                     sequenceIndex++;
@@ -476,6 +483,15 @@ public class Game_Manager : MonoBehaviour
                 StartCoroutine(WaitForPLayerAttack());
                 staff.StopTimer();
                 ActiveButtons = false;
+                curEnemySetDeadCount++;
+                if(curEnemySetDeadCount == curEnemySetSize)
+                {
+                    if(instructionScreen != null)
+                    {
+                        Destroy(instructionScreen.gameObject);
+                    }
+                    staff.FadeStaff(2, null);
+                }
 
             }
         }
@@ -560,12 +576,17 @@ public class Game_Manager : MonoBehaviour
             if (curEnemy.dead && curEnemy.finishedAttacking && !player.isAttacking)
             {
                
-                curEnemySetDeadCount++;
+                
                 playerLockingOn = false;
                 staff.FadeOutNotes();
                 print("enemyDead");
                 if (curEnemySetDeadCount == curEnemySetSize)
                 {
+                    if(currentPhase != phases.Phase4)
+                    {
+                        staff.FadeStaff(2, null);
+                    }
+                    
                     player.resetRotation((int)currentPhase);
                     enemiesDead = true;
                     cam.doneLerping = false;
