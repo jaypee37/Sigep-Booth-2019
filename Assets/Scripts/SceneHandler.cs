@@ -10,9 +10,19 @@ public class SceneHandler : MonoBehaviour
 
     public enum Scene {
         Start,
+        Difficulty,
+        Opening,
         Game,
         Win,
         Loss
+        
+    }
+
+    public enum Difficulty
+    {
+        Easy,
+        Medium,
+        Hard
     }
 
     #endregion
@@ -39,6 +49,8 @@ public class SceneHandler : MonoBehaviour
     Image _fadeImage;
 
     #endregion
+
+    public Difficulty difficulty;
 
     #region Unity events
 
@@ -70,6 +82,12 @@ public class SceneHandler : MonoBehaviour
             case Scene.Start:
                 SceneManager.LoadScene("Menu", LoadSceneMode.Single);
                 break;
+            case Scene.Difficulty:
+                SceneManager.LoadScene("Difficulty", LoadSceneMode.Single);
+                break;
+            case Scene.Opening:
+                SceneManager.LoadScene("Opening Scene", LoadSceneMode.Single);
+                break;
             case Scene.Game:
                 SceneManager.LoadScene("JayPee Scene", LoadSceneMode.Single);
                 break;
@@ -77,6 +95,7 @@ public class SceneHandler : MonoBehaviour
                 SceneManager.LoadScene("Win", LoadSceneMode.Single);
                 break;
             case Scene.Loss:
+                SceneManager.LoadScene("Lose", LoadSceneMode.Single);
                 break;
         }
 

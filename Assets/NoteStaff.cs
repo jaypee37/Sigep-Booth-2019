@@ -26,13 +26,33 @@ public class NoteStaff : MonoBehaviour
     bool numberFadeOut = false;
     float _timeElapsed;
     public bool fading = false;
-    int numberTextIndex = 5;
+    int numberTextIndex;
     float staffFadeTime = 1.2f;
     float staffFadeTimeElapsed;
+    int MaxNumberIndex;
     
-    
+    void SetNoteTransforms()
+    {
+
+    }
+    void SetNumberText(SceneHandler.Difficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case SceneHandler.Difficulty.Easy:
+                MaxNumberIndex = 10;
+                break;
+            case SceneHandler.Difficulty.Medium:
+                MaxNumberIndex = 6;
+                break;
+            case SceneHandler.Difficulty.Hard:
+                MaxNumberIndex = 4;
+                break;
+        }
+    }
     void Start()
     {
+        SetNumberText(SceneHandler.instance.difficulty);
         image = GetComponent<Image>();
         Color curColor = this.image.color;
         curColor.a = 0;
@@ -45,7 +65,7 @@ public class NoteStaff : MonoBehaviour
         timerImage.color = timerColor;
 
         numberText = timer.GetComponentInChildren<TextMeshProUGUI>();
-        numberText.text = "5";
+        numberText.text = MaxNumberIndex.ToString();
         Color numColor = numberText.color;
         numColor.a = 0;
         numberText.color = numColor;
@@ -75,8 +95,8 @@ public class NoteStaff : MonoBehaviour
     {
         numberFadeIn = true;
         fading = true;
-        numberText.text = "5";
-        numberTextIndex = 5;
+        numberText.text = MaxNumberIndex.ToString();
+        numberTextIndex = MaxNumberIndex;
 
         print("open up timer");
         timerImage = timer.GetComponent<Image>();
@@ -141,7 +161,7 @@ public class NoteStaff : MonoBehaviour
                 if (!numberFadeIn && numberTextIndex == 0)
                 {
                     fading = false;
-                    numberTextIndex = 5;
+                    numberTextIndex = MaxNumberIndex;
                     Color timerColor = numberText.color;
                     timerColor.a = 0;
                     numberText.color = timerColor;
@@ -176,7 +196,7 @@ public class NoteStaff : MonoBehaviour
     {
         StopAllCoroutines();
         fading = false;
-        numberTextIndex = 5;
+        numberTextIndex = MaxNumberIndex;
         Color timerColor = numberText.color;
         timerColor.a = 0;
         numberText.color = timerColor;
