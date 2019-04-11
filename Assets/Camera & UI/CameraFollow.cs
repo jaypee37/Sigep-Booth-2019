@@ -94,7 +94,7 @@ public class CameraFollow : MonoBehaviour
                 float percentage = (cameraTimerElapsed / camerafadeTime);
                
 
-                if (percentage > .06 && percentage < .1 && !fadeMaterialsInView)
+                if (percentage > .06 && percentage < .2 && !fadeMaterialsInView)
                 {
                     _MaterialFadeManager.FadeOutMaterials();
                 }
@@ -112,7 +112,7 @@ public class CameraFollow : MonoBehaviour
                     print("finished fade back");
                     doneLerping = true;
                     lerping = false;
-                    _MaterialFadeManager.FadeInMaterials();
+                    
                     cameraTimerElapsed = 0;
                     locIndex++;
                     print(locIndex);
@@ -125,6 +125,10 @@ public class CameraFollow : MonoBehaviour
                     lerpForward = false;
                 }
                 float percentage = (cameraTimerElapsed / camerafadeTime);
+                if (percentage > .06 && percentage < .2 && !fadeMaterialsInView)
+                {
+                    _MaterialFadeManager.FadeInMaterials();
+                }
 
                 transform.position = Vector3.Lerp(transform.position, prevLoc.transform.position, lerpSpeed * Time.deltaTime);
                 transform.rotation = Quaternion.Lerp(transform.rotation, prevLoc.transform.rotation, lerpSpeed * Time.deltaTime);
@@ -136,13 +140,14 @@ public class CameraFollow : MonoBehaviour
     public void lerpIn(bool dir, string[] notes)
     {
         prevLoc.transform.position = transform.position;
+        prevLoc.transform.rotation = transform.rotation;
         lerping = true;
         lerpForward = dir;
             
     }
     public void lerpOut()
     {
-        n.FadeStaff(2, null);
+        //n.FadeStaff(2, null);
         lerping = true;
         lerpForward = false;
         
