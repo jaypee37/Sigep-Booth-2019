@@ -53,6 +53,7 @@ public class SceneHandler : MonoBehaviour
     #endregion
 
     public Difficulty difficulty;
+    public AudioSource _audioSource;
 
     #region Unity events
 

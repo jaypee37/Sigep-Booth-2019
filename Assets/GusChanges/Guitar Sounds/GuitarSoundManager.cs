@@ -8,33 +8,59 @@ public class GuitarSoundManager : MonoBehaviour
     AudioClip redAudio;
     AudioClip yellowAudio;
     AudioClip blueAudio;
+    AudioClip DeLaVoice;
+    public AudioSource _audioSource;
 
     void Start() {
-        greenAudio = (AudioClip)Resources.Load("green");
-        redAudio = (AudioClip)Resources.Load("red");
-        yellowAudio = (AudioClip)Resources.Load("yellow");
-        blueAudio = (AudioClip)Resources.Load("blue");
+        greenAudio = (AudioClip)Resources.Load("Green");
+        redAudio = (AudioClip)Resources.Load("Red");
+        yellowAudio = (AudioClip)Resources.Load("Yellow");
+        blueAudio = (AudioClip)Resources.Load("Blue");
+        DeLaVoice = (AudioClip)Resources.Load("DeLaVoice");
     }
 
-    // QUESTION: DO YOU WANT NEW NOTES TO STOP THE SOUND OF THE OLD NOTE? CURRENTLY I THINK THEY DO
+    
     void Update()
     {
-        if (Input.GetButtonDown("Green"))
+        
+    }
+
+    public void playGreen()
+    {
+        GetComponent<AudioSource>().PlayOneShot(greenAudio);
+    }
+    public void playRed()
+    {
+        GetComponent<AudioSource>().PlayOneShot(redAudio);
+    }
+    public void playYellow()
+    {
+        GetComponent<AudioSource>().PlayOneShot(yellowAudio);
+    }
+    public void playBlue()
+    {
+        GetComponent<AudioSource>().PlayOneShot(blueAudio);
+    }
+    public void playDeLaVoice()
+    {
+        _audioSource.Play();
+    }
+    public void PlayStrum(string color)
+    {
+        switch(color)
         {
-            GetComponent<AudioSource>().PlayOneShot(greenAudio);
-        }
-        else if (Input.GetButtonDown("Red"))
-        {
-            Debug.Log("YESSS");
-            GetComponent<AudioSource>().PlayOneShot(redAudio);
-        }
-        else if (Input.GetButtonDown("Yellow"))
-        {
-            GetComponent<AudioSource>().PlayOneShot(yellowAudio);
-        }
-        else if (Input.GetButtonDown("Blue"))
-        {
-            GetComponent<AudioSource>().PlayOneShot(blueAudio);
+            case "Green":
+                playGreen();
+                break;
+            case "Red":
+                playRed();
+                break;
+            case "Yellow":
+                playYellow();
+                break;
+            case "Blue":
+                playBlue();
+                break;
         }
     }
 }

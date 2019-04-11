@@ -6,20 +6,22 @@ using UnityEngine.SceneManagement;
 
 public class LoseScene : MonoBehaviour
 {
+    public Canvas StartScreen;
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        
     }
 
     IEnumerator WaitForSceneSwitch()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(6);
+        SceneHandler.instance.SetFadedAndCanvas(false,StartScreen);
         SceneHandler.instance.ChangeScene(SceneHandler.Scene.Start);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        WaitForSceneSwitch();
+        StartCoroutine( WaitForSceneSwitch());
     }
 }

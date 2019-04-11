@@ -17,7 +17,7 @@ public class WinPictureManager : MonoBehaviour
     }
     void Start()
     {
-        StartCoroutine(FadeScreen());
+        StartCoroutine(ReturnToMenu());
     }
 
     // Update is called once per frame
@@ -27,23 +27,9 @@ public class WinPictureManager : MonoBehaviour
     }
 
 
-    IEnumerator FadeScreen()
-    {
-
-        float timeElapsed = 0.0f;
-        while (timeElapsed < _fadeTime)
-        {
-            timeElapsed += Time.deltaTime;
-            float alpha = (timeElapsed / _fadeTime);
-            rawImage.color = new Color(alpha, alpha, alpha, 255);
-            
-            yield return null;
-        }
-       
-    }
     IEnumerator ReturnToMenu()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(4);
         SceneHandler.instance.ChangeScene(SceneHandler.Scene.Start);
     }
 }

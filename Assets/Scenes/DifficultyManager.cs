@@ -54,6 +54,7 @@ public class DifficultyManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         
         SceneHandler.instance.ChangeScene(SceneHandler.Scene.Opening);
+        Destroy(SceneHandler.instance._audioSource.gameObject);
     }
    
 

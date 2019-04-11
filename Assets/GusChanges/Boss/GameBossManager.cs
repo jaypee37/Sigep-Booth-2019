@@ -49,6 +49,8 @@ public class GameBossManager : MonoBehaviour
     bool startStaffFaded = false;
     bool gameEnded = false;
     int maxSequenceNumber;
+    public GuitarSoundManager guitarManager;
+    public Canvas loseScreen;
 
 
     //Phases are now what form of attack he is in
@@ -136,6 +138,7 @@ public class GameBossManager : MonoBehaviour
             if (!startStaffFaded)
             {
                 staff.FadeStaff(1, null);
+                staff.StopTimer();
                 startStaffFaded = true;
                 sequenceFinished = false;
             }
@@ -161,7 +164,7 @@ public class GameBossManager : MonoBehaviour
                     if(!gameEnded)
                     {
                         gameEnded = true;
-                        SceneHandler.instance.SetFadedAndCanvas(true, winScreen);
+                        SceneHandler.instance.SetFadedAndCanvas(false, winScreen);
                         SceneHandler.instance.ChangeScene(SceneHandler.Scene.Win);
                     }
                    
@@ -233,6 +236,7 @@ public class GameBossManager : MonoBehaviour
 
                 if (curColor == sequence[sequenceIndex] || Input.GetButtonDown("Submit"))
                 {
+                    guitarManager.PlayStrum(curColor);
                     staff.GrayOutNote(sequenceIndex);
                     sequenceIndex++;
                     if (sequenceIndex == maxSequenceNumber)

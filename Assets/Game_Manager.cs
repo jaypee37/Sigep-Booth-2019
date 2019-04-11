@@ -53,7 +53,9 @@ public class Game_Manager : MonoBehaviour
     public ActivateBoss activateBoss;
     int maxSequenceNumber;
     int playerHealth = 3;
-    bool gameEnded = false; 
+    bool gameEnded = false;
+    public GuitarSoundManager guitarManager;
+    public Canvas loseScreen;
     
 
 
@@ -169,6 +171,7 @@ public class Game_Manager : MonoBehaviour
             if(playerHealth <= 0 && !gameEnded && curEnemy.finishedAttacking)
             {
                 gameEnded = true;
+                SceneHandler.instance.SetFadedAndCanvas(false, loseScreen);
                 SceneHandler.instance.ChangeScene(SceneHandler.Scene.Loss);
             }
             switch (currentPhase)
@@ -218,7 +221,7 @@ public class Game_Manager : MonoBehaviour
                     }
                     break;
                 case phases.Phase3:
-                    curEnemySetSize = 3;
+                    curEnemySetSize = 2;
                     if (!playerPhaseDone && !enemyMovingPhase)
                     {
                         HandlePlayerPhase();
@@ -261,7 +264,9 @@ public class Game_Manager : MonoBehaviour
                     break;
                 default:
                     staff.StopTimer();
+                    guitarManager.playDeLaVoice();
                     activateBoss.Activate();
+                    
                     running = false;
                     break;
             }
@@ -342,8 +347,8 @@ public class Game_Manager : MonoBehaviour
                         break;
                     case phases.Phase3:
                         enemySet = GameObject.FindGameObjectWithTag("EnemySet3");
-                        curEnemySet = new enemyMove[3];
-                        for (int i = 0; i < 3; i++)
+                        curEnemySet = new enemyMove[2];
+                        for (int i = 0; i < 2; i++)
                         {
                             curEnemySet[i] = enemySet.transform.GetChild(i).GetComponent<enemyMove>();
                             Vector3 turn = new Vector3();
@@ -481,6 +486,7 @@ public class Game_Manager : MonoBehaviour
 
                 if (curColor == sequence[sequenceIndex] )
                 {
+                    guitarManager.PlayStrum(curColor);
                     staff.GrayOutNote(sequenceIndex);
                     sequenceIndex++;
                     if (sequenceIndex == maxSequenceNumber)

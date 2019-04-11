@@ -31,6 +31,8 @@ public class NoteStaff : MonoBehaviour
     float staffFadeTimeElapsed;
     int MaxNumberIndex;
     int noteCount;
+    bool onlyStaff;
+    public Transform boosLocStaff;
     
     void SetNoteTransforms(SceneHandler.Difficulty difficulty)
     {
@@ -131,6 +133,8 @@ public class NoteStaff : MonoBehaviour
     void Update()
     {
         
+        
+        
         if (fadeIn)
         {
             
@@ -208,6 +212,7 @@ public class NoteStaff : MonoBehaviour
      
 
     }
+    
 
     public void StopTimer()
     {

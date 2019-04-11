@@ -7,12 +7,15 @@ using UnityEngine.Video;
 public class WinNVideoPlayer : MonoBehaviour
 {
     public RawImage rawImage;
+    public RawImage fadeCanvas;
     public VideoPlayer videoPlayer;
     bool _vidStarted;
     bool gameStarted = false;
     bool vidEnd = false;
     float _fadeTime = 5f;
     bool _faded = true;
+    public Canvas winScreen;
+    
     // Start is called before the first frame update
     private void Awake()
     {
@@ -20,7 +23,7 @@ public class WinNVideoPlayer : MonoBehaviour
     }
     void Start()
     {
-        
+        StartCoroutine(FadeInScreen());
     }
 
     // Update is called once per frame
@@ -54,13 +57,14 @@ public class WinNVideoPlayer : MonoBehaviour
     }
     IEnumerator FadeInScreen()
     {
-        _faded = !_faded;
+        
         float timeElapsed = 0.0f;
         while (timeElapsed < 5f)
         {
             timeElapsed += Time.deltaTime;
-            float alpha = 1.0f - (timeElapsed / 5f);
-            rawImage.color = new Color(0, 0, 0, alpha);
+            float alpha =(timeElapsed / 2f);
+            float color = Mathf.Lerp(0, 255, 0.05f);
+            rawImage.color = new Color(color, color, color, 255);
 
             yield return null;
         }
@@ -85,6 +89,8 @@ public class WinNVideoPlayer : MonoBehaviour
     IEnumerator ReturnToMenu()
     {
         yield return new WaitForSeconds(1);
-        SceneHandler.instance.ChangeScene(SceneHandler.Scene.Start);
+        SceneHandler.instance.SetFadedAndCanvas(false, winScreen);
+        SceneHandler.instance.ChangeScene(SceneHandler.Scene.WinPicture);
+        //SceneHandler.instance.ChangeScene(SceneHandler.Scene.Start);
     }
 }
