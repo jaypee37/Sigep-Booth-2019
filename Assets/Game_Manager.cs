@@ -51,6 +51,7 @@ public class Game_Manager : MonoBehaviour
     Quaternion prevPlayerRotation;
     bool lerpCalled;
     public ActivateBoss activateBoss;
+    int maxSequenceNumber;
 
     
 
@@ -72,14 +73,14 @@ public class Game_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SetDifficulty(SceneHandler.instance.difficulty);
         instructionScreen.gameObject.SetActive(false);
         currentPhase = phases.Phase1;
         curEnemySet = new enemyMove[4];
         dontTurnCamera = false;
         Input.ResetInputAxes();
         running = false;
-        StartCoroutine(WaitForAwake());
-        
+        StartCoroutine(WaitForAwake());        
    
     }
     IEnumerator WaitForSequence()
@@ -136,6 +137,21 @@ public class Game_Manager : MonoBehaviour
 
     }
 
+    void SetDifficulty(SceneHandler.Difficulty difficulty)
+    {
+        switch(difficulty)
+        {
+            case SceneHandler.Difficulty.Easy:
+                maxSequenceNumber = 2;
+                break;
+            case SceneHandler.Difficulty.Medium:
+                maxSequenceNumber = 4;
+                break;
+            case SceneHandler.Difficulty.Hard:
+                maxSequenceNumber = 6;
+                break;
+        }
+    }
 
 
     private void LateUpdate()
@@ -405,7 +421,7 @@ public class Game_Manager : MonoBehaviour
     public void CreateButtonSequence()
     {
         
-        sequence = new string[4];
+        sequence = new string[maxSequenceNumber];
         for (int i = 0; i < 4; i++)
         {
             sequence[i] = buttons[(int)Random.Range(0, 4)];
@@ -458,7 +474,7 @@ public class Game_Manager : MonoBehaviour
                 {
                     staff.GrayOutNote(sequenceIndex);
                     sequenceIndex++;
-                    if (sequenceIndex == 4)
+                    if (sequenceIndex == maxSequenceNumber)
                     {
                         sequenceFinished = true;
                     }

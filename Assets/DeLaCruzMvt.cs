@@ -32,7 +32,6 @@ public class DeLaCruzMvt : MonoBehaviour
         locIndex++;
         allowedToMove = false;
         moving = false;
-        yield return new WaitForSeconds(2);
         finishedMove = false;
         transform.rotation = curLoc.rotation;
         animator.SetBool("Run", false);
